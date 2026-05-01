@@ -1,0 +1,24 @@
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+
+COPY BananaGestion.sln ./
+COPY src/BananaGestion.Api/BananaGestion.Api.csproj ./src/BananaGestion.Api/
+COPY src/BananaGestion.Application/BananaGestion.Application.csproj ./src/BananaGestion.Application/
+COPY src/BananaGestion.Domain/BananaGestion.Domain.csproj ./src/BananaGestion.Domain/
+COPY src/BananaGestion.Infrastructure/BananaGestion.Infrastructure.csproj ./src/BananaGestion.Infrastructure/
+
+RUN dotnet restore ./src/BananaGestion.Api/BananaGestion.Api.csproj
+
+COPY src/ ./src/
+
+WORKDIR /src/src/BananaGestion.Api
+RUN dotnet publish -c Release -o /app/publish
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+WORKDIR /app
+COPY --from=build /app/publish .
+
+EXPOSE 5000
+ENV ASPNETCORE_URLS=http://+:5000
+
+ENTRYPOINT ["dotnet", "BananaGestion.Api.dll"]

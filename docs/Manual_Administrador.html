@@ -1,0 +1,985 @@
+
+        <!DOCTYPE html>
+        <html lang="es">
+        <head>
+            <meta charset="UTF-8">
+            <title>Manual de Usuario - Administrador</title>
+            
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #1f2937;
+            font-size: 11pt;
+        }
+        
+        h1 {
+            font-size: 24pt;
+            color: #047857;
+            border-bottom: 3px solid #047857;
+            padding-bottom: 10px;
+            margin-bottom: 5px;
+            margin-top: 0;
+        }
+        
+        h2 {
+            font-size: 16pt;
+            color: #047857;
+            border-bottom: 1px solid #d1d5db;
+            padding-bottom: 6px;
+            margin-top: 30px;
+            margin-bottom: 12px;
+        }
+        
+        h3 {
+            font-size: 13pt;
+            color: #374151;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        
+        h4 {
+            font-size: 11pt;
+            color: #4b5563;
+            margin-top: 15px;
+            margin-bottom: 8px;
+        }
+        
+        p {
+            margin-bottom: 10px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 10pt;
+        }
+        
+        th {
+            background-color: #047857;
+            color: white;
+            padding: 8px 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 6px 12px;
+            border: 1px solid #d1d5db;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f3f4f6;
+        }
+        
+        tr:nth-child(odd) {
+            background-color: #ffffff;
+        }
+        
+        code {
+            background-color: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 10pt;
+        }
+        
+        pre {
+            background-color: #1f2937;
+            color: #e5e7eb;
+            padding: 12px 16px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 12px 0;
+        }
+        
+        pre code {
+            background: none;
+            padding: 0;
+            color: inherit;
+        }
+        
+        blockquote {
+            border-left: 4px solid #047857;
+            background-color: #ecfdf5;
+            padding: 10px 15px;
+            margin: 15px 0;
+            color: #065f46;
+        }
+        
+        ul, ol {
+            margin-left: 20px;
+            margin-bottom: 10px;
+        }
+        
+        li {
+            margin-bottom: 4px;
+        }
+        
+        strong {
+            color: #047857;
+        }
+        
+        hr {
+            border: none;
+            border-top: 1px solid #d1d5db;
+            margin: 25px 0;
+        }
+        
+        .cover-page {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 80vh;
+            text-align: center;
+        }
+        
+        .cover-page h1 {
+            font-size: 32pt;
+            border: none;
+            margin-bottom: 20px;
+        }
+        
+        .cover-page .subtitle {
+            font-size: 16pt;
+            color: #6b7280;
+            margin-bottom: 40px;
+        }
+        
+        .cover-page .info {
+            font-size: 11pt;
+            color: #9ca3af;
+        }
+        
+        .cover-page .logo {
+            font-size: 48pt;
+            margin-bottom: 30px;
+        }
+        
+        a {
+            color: #047857;
+            text-decoration: none;
+        }
+        
+        .page-break {
+            page-break-before: always;
+        }
+    </style>
+
+        </head>
+        <body>
+            <h1>Manual de Usuario - Administrador</h1>
+<h2>Sistema de Gestión de Finca Bananera - BananaGestion</h2>
+<hr>
+<h2>Tabla de Contenidos</h2>
+<ol>
+<li><a href="#1-introducci%C3%B3n">Introducción</a></li>
+<li><a href="#2-acceso-al-sistema">Acceso al Sistema</a></li>
+<li><a href="#3-dashboard">Dashboard</a></li>
+<li><a href="#4-m%C3%B3dulo-usuarios">Módulo Usuarios</a></li>
+<li><a href="#5-m%C3%B3dulo-lotes">Módulo Lotes</a></li>
+<li><a href="#6-m%C3%B3dulo-labores">Módulo Labores</a></li>
+<li><a href="#7-m%C3%B3dulo-cosecha">Módulo Cosecha</a></li>
+<li><a href="#8-m%C3%B3dulo-inventario">Módulo Inventario</a></li>
+<li><a href="#9-m%C3%B3dulo-%C3%B3rdenes">Módulo Órdenes</a></li>
+<li><a href="#10-m%C3%B3dulo-reportes">Módulo Reportes</a></li>
+<li><a href="#11-configuraci%C3%B3n">Configuración</a></li>
+<li><a href="#12-gesti%C3%B3n-de-sesi%C3%B3n">Gestión de Sesión</a></li>
+</ol>
+<hr>
+<h2>1. Introducción</h2>
+<h3>1.1 Descripción del Sistema</h3>
+<p>BananaGestion es un sistema completo para la gestión de una finca bananera. Permite controlar labores, cosecha, inventario y órdenes de embarque de manera centralizada.</p>
+<h3>1.2 Arquitectura</h3>
+<table>
+<thead>
+<tr>
+<th>Componente</th>
+<th>Tecnología</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Frontend</td>
+<td>React 18 + TypeScript + TailwindCSS</td>
+</tr>
+<tr>
+<td>Backend API</td>
+<td>.NET 8 (Clean Architecture)</td>
+</tr>
+<tr>
+<td>Base de Datos</td>
+<td>PostgreSQL 16</td>
+</tr>
+<tr>
+<td>Autenticación</td>
+<td>JWT (JSON Web Tokens)</td>
+</tr>
+<tr>
+<td>Contenedores</td>
+<td>Docker / Docker Compose</td>
+</tr>
+</tbody></table>
+<h3>1.3 Roles del Sistema</h3>
+<table>
+<thead>
+<tr>
+<th>Rol</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Administrador</strong></td>
+<td>Acceso completo a todos los módulos del sistema</td>
+</tr>
+<tr>
+<td><strong>Supervisor</strong></td>
+<td>Acceso solo a Dashboard, Labores y Cosecha</td>
+</tr>
+<tr>
+<td><strong>Obrero</strong></td>
+<td>Acceso básico para registrar ejecución de tareas</td>
+</tr>
+</tbody></table>
+<h3>1.4 Acceso al Sistema</h3>
+<table>
+<thead>
+<tr>
+<th>Servicio</th>
+<th>URL</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Frontend</td>
+<td><a href="http://localhost">http://localhost</a></td>
+</tr>
+<tr>
+<td>API</td>
+<td><a href="http://localhost:5000">http://localhost:5000</a></td>
+</tr>
+<tr>
+<td>Swagger</td>
+<td><a href="http://localhost:5000/swagger">http://localhost:5000/swagger</a></td>
+</tr>
+</tbody></table>
+<hr>
+<h2>2. Acceso al Sistema</h2>
+<h3>2.1 Iniciar Sesión</h3>
+<ol>
+<li>Abra el navegador y vaya a <strong><a href="http://localhost">http://localhost</a></strong></li>
+<li>Ingrese su <strong>correo electrónico</strong> y <strong>contraseña</strong></li>
+<li>Haga clic en <strong>Iniciar Sesión</strong></li>
+</ol>
+<h3>2.2 Registro de Usuario</h3>
+<ol>
+<li>En la pantalla de login, haga clic en <strong>Registrarse</strong></li>
+<li>Complete los campos:<ul>
+<li>Nombre</li>
+<li>Apellido</li>
+<li>Correo electrónico</li>
+<li>Teléfono (opcional)</li>
+<li>Rol (Administrador, Supervisor u Obrero)</li>
+<li>Contraseña (mínimo 6 caracteres)</li>
+</ul>
+</li>
+<li>Haga clic en <strong>Registrarse</strong></li>
+</ol>
+<blockquote>
+<p><strong>Nota:</strong> El primer usuario registrado como Administrador podrá crear usuarios adicionales desde el módulo de Usuarios.</p>
+</blockquote>
+<h3>2.3 Cerrar Sesión</h3>
+<ul>
+<li>Haga clic en el botón <strong>Cerrar Sesión</strong> ubicado en la parte inferior de la barra lateral.</li>
+</ul>
+<hr>
+<h2>3. Dashboard</h2>
+<p>El Dashboard es la página principal del sistema. Muestra un resumen general del estado de la finca.</p>
+<h3>3.1 Tarjetas de Métricas</h3>
+<table>
+<thead>
+<tr>
+<th>Tarjeta</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Tareas Pendientes</strong></td>
+<td>Número total de tareas asignadas que aún no han sido completadas</td>
+</tr>
+<tr>
+<td><strong>Tareas Vencidas</strong></td>
+<td>Tareas cuya fecha programada ya pasó sin ser completadas</td>
+</tr>
+<tr>
+<td><strong>Racimos Cortados</strong></td>
+<td>Total de racimos cosechados (estado &quot;Cortado&quot;) a la fecha</td>
+</tr>
+<tr>
+<td><strong>Bajo Stock</strong></td>
+<td>Productos de inventario cuyo stock actual está por debajo del mínimo</td>
+</tr>
+<tr>
+<td><strong>Obreros Activos</strong></td>
+<td>Número de trabajadores con rol &quot;Obrero&quot; registrados y activos</td>
+</tr>
+<tr>
+<td><strong>Lotes Activos</strong></td>
+<td>Número de parcelas/terrenos habilitados en el sistema</td>
+</tr>
+</tbody></table>
+<h3>3.2 Proyección de Cosecha</h3>
+<p>Muestra las próximas 4 semanas con datos de encinte y la cantidad de racimos encintados. Cada semana tiene asociado un color de cinta rotativo.</p>
+<h3>3.3 Actividad Reciente</h3>
+<p>Lista las últimas 5 tareas con su estado actual (Pendiente, EnProgreso, Completada).</p>
+<hr>
+<h2>4. Módulo Usuarios</h2>
+<p><strong>Acceso:</strong> Solo Administrador</p>
+<h3>4.1 Ver Lista de Usuarios</h3>
+<ol>
+<li>Navegue a <strong>Usuarios</strong> en el menú lateral</li>
+<li>Se muestra una tabla con:<ul>
+<li>Nombre completo</li>
+<li>Correo electrónico</li>
+<li>Teléfono</li>
+<li>Rol</li>
+<li>Estado (Activo/Inactivo)</li>
+<li>Fecha de creación</li>
+<li>Acciones</li>
+</ul>
+</li>
+</ol>
+<h3>4.2 Crear Usuario</h3>
+<ol>
+<li>Haga clic en el botón <strong>Nuevo Usuario</strong> (esquina superior derecha)</li>
+<li>Complete el formulario:<ul>
+<li><strong>Nombre:</strong> Nombre del usuario (requerido)</li>
+<li><strong>Apellido:</strong> Apellido del usuario (requerido)</li>
+<li><strong>Email:</strong> Correo electrónico único (requerido)</li>
+<li><strong>Teléfono:</strong> Número de contacto (opcional)</li>
+<li><strong>Rol:</strong> Seleccione Administrador, Supervisor u Obrero</li>
+<li><strong>Contraseña:</strong> Mínimo 6 caracteres (requerida)</li>
+</ul>
+</li>
+<li>Haga clic en <strong>Crear</strong></li>
+</ol>
+<h3>4.3 Editar Usuario</h3>
+<ol>
+<li>En la lista de usuarios, haga clic en el ícono de <strong>lápiz</strong> (Editar)</li>
+<li>Modifique los campos deseados</li>
+<li>Haga clic en <strong>Actualizar</strong></li>
+</ol>
+<h3>4.4 Desactivar Usuario</h3>
+<ol>
+<li>En la lista de usuarios, haga clic en el ícono de <strong>apagar</strong> (naranja)</li>
+<li>Confirme la acción en el diálogo</li>
+<li>El usuario quedará en estado <strong>Inactivo</strong> y no podrá iniciar sesión</li>
+</ol>
+<h3>4.5 Activar Usuario</h3>
+<ol>
+<li>En la lista de usuarios, haga clic en el ícono de <strong>encender</strong> (verde) en usuarios inactivos</li>
+<li>Confirme la acción en el diálogo</li>
+<li>El usuario volverá a estado <strong>Activo</strong> y podrá iniciar sesión</li>
+</ol>
+<h3>4.6 Eliminar Usuario</h3>
+<ol>
+<li>En la lista de usuarios, haga clic en el ícono de <strong>basurero</strong> (rojo)</li>
+<li>Confirme la eliminación</li>
+<li>El usuario será desactivado (eliminación suave)</li>
+</ol>
+<blockquote>
+<p><strong>Nota:</strong> Un Supervisor no puede eliminar ni modificar a un Administrador.</p>
+</blockquote>
+<hr>
+<h2>5. Módulo Lotes</h2>
+<p><strong>Acceso:</strong> Solo Administrador</p>
+<h3>5.1 Ver Lista de Lotes</h3>
+<ol>
+<li>Navegue a <strong>Lotes</strong> en el menú lateral</li>
+<li>Se muestra una tabla con:<ul>
+<li>Código</li>
+<li>Nombre</li>
+<li>Hectáreas</li>
+<li>Ubicación</li>
+<li>Estado (Activo/Inactivo)</li>
+<li>Acciones</li>
+</ul>
+</li>
+</ol>
+<h3>5.2 Crear Lote</h3>
+<ol>
+<li>Haga clic en <strong>Nuevo Lote</strong></li>
+<li>Complete el formulario:<ul>
+<li><strong>Código:</strong> Identificador único del lote (ej: L-001)</li>
+<li><strong>Nombre:</strong> Nombre descriptivo del lote</li>
+<li><strong>Hectáreas:</strong> Tamaño en hectáreas (número decimal)</li>
+<li><strong>Ubicación:</strong> Descripción textual de la ubicación</li>
+<li><strong>Latitud / Longitud:</strong> Coordenadas GPS (opcionales)</li>
+<li><strong>Notas:</strong> Observaciones adicionales</li>
+</ul>
+</li>
+<li>Haga clic en <strong>Crear</strong></li>
+</ol>
+<h3>5.3 Editar Lote</h3>
+<ol>
+<li>Haga clic en el ícono de <strong>lápiz</strong> en el lote deseado</li>
+<li>Modifique los campos</li>
+<li>Haga clic en <strong>Actualizar</strong></li>
+</ol>
+<h3>5.4 Desactivar Lote</h3>
+<ol>
+<li>Haga clic en el ícono de <strong>basurero</strong></li>
+<li>Confirme la acción</li>
+<li>El lote quedará inactivo y no aparecerá en listas de selección</li>
+</ol>
+<hr>
+<h2>6. Módulo Labores</h2>
+<p><strong>Acceso:</strong> Todos los roles (Administrador, Supervisor, Obrero)</p>
+<h3>6.1 Pestaña: Configuración de Tareas</h3>
+<p>Solo visible para Administrador y Supervisor.</p>
+<h4>6.1.1 Crear Tipo de Tarea</h4>
+<ol>
+<li>Haga clic en <strong>Nueva Configuración</strong></li>
+<li>Complete:<ul>
+<li><strong>Nombre:</strong> Nombre de la labor (ej: Desmache, Deshoja, Fumigación)</li>
+<li><strong>Tipo de Labor:</strong> Categoría de la tarea</li>
+<li><strong>Tipo:</strong> Frecuente o Puntual</li>
+<li><strong>Frecuencia (días):</strong> Cada cuántos días se repite (0 para puntual)</li>
+<li><strong>Requiere Foto:</strong> Sí/No</li>
+<li><strong>Requiere Firma:</strong> Sí/No</li>
+<li><strong>Requiere GPS:</strong> Sí/No</li>
+</ul>
+</li>
+<li>Haga clic en <strong>Crear</strong></li>
+</ol>
+<h4>6.1.2 Editar/Eliminar Configuración</h4>
+<ul>
+<li>Use los íconos de <strong>lápiz</strong> (editar) o <strong>basurero</strong> (eliminar) en la fila correspondiente</li>
+</ul>
+<h3>6.2 Pestaña: Tareas Pendientes</h3>
+<p>Lista todas las tareas asignadas con su estado:</p>
+<table>
+<thead>
+<tr>
+<th>Estado</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Pendiente</strong></td>
+<td>Tarea programada sin iniciar</td>
+</tr>
+<tr>
+<td><strong>EnProgreso</strong></td>
+<td>Tarea en ejecución</td>
+</tr>
+<tr>
+<td><strong>Completada</strong></td>
+<td>Tarea finalizada</td>
+</tr>
+</tbody></table>
+<h4>6.2.1 Crear Asignación de Tarea</h4>
+<ol>
+<li>Haga clic en <strong>Nueva Asignación</strong></li>
+<li>Seleccione:<ul>
+<li><strong>Configuración:</strong> Tipo de tarea a asignar</li>
+<li><strong>Usuario:</strong> Trabajador responsable</li>
+<li><strong>Lote:</strong> Parcela donde se ejecutará</li>
+<li><strong>Fecha Programada:</strong> Cuándo debe realizarse</li>
+<li><strong>Notas:</strong> Observaciones adicionales</li>
+</ul>
+</li>
+<li>Haga clic en <strong>Crear</strong></li>
+</ol>
+<h4>6.2.2 Cambiar Estado de Tarea</h4>
+<ol>
+<li>Localice la tarea en la lista</li>
+<li>Haga clic en el botón de cambio de estado</li>
+<li>Seleccione el nuevo estado</li>
+</ol>
+<h3>6.3 Pestaña: Tareas Vencidas</h3>
+<p>Muestra las tareas cuya fecha programada ya pasó y no han sido completadas.</p>
+<h3>6.4 Registrar Ejecución de Tarea</h3>
+<ol>
+<li>Seleccione una tarea asignada</li>
+<li>Complete el registro:<ul>
+<li><strong>Foto:</strong> Subir imagen de la ejecución (si es requerida)</li>
+<li><strong>Firma:</strong> Cargar firma digital (si es requerida)</li>
+<li><strong>Latitud / Longitud:</strong> Coordenadas GPS del punto de ejecución (si es requerido)</li>
+<li><strong>Observaciones:</strong> Notas sobre la labor realizada</li>
+</ul>
+</li>
+<li>Haga clic en <strong>Registrar</strong></li>
+</ol>
+<hr>
+<h2>7. Módulo Cosecha</h2>
+<p><strong>Acceso:</strong> Todos los roles (Administrador, Supervisor, Obrero)
+<strong>Escritura (Registrar):</strong> Solo Administrador y Supervisor</p>
+<h3>7.1 Pestaña: Encinte</h3>
+<p>Muestra las 52 semanas del año con su color de cinta asociado y la cantidad de racimos encintados.</p>
+<h4>7.1.1 Registrar Encinte</h4>
+<ol>
+<li>Haga clic en <strong>Nuevo Encinte</strong></li>
+<li>Seleccione:<ul>
+<li><strong>Lote:</strong> Parcela donde se realizó el encinte</li>
+<li><strong>Semana de Encinte:</strong> Semana del año (1-52) con su color de cinta</li>
+<li><strong>Cantidad de Racimos Embolsados:</strong> Número de racimos encintados</li>
+<li><strong>Notas:</strong> Observaciones opcionales</li>
+</ul>
+</li>
+<li>Haga clic en <strong>Guardar</strong></li>
+</ol>
+<h4>7.1.2 Tabla de Colores de Cinta</h4>
+<table>
+<thead>
+<tr>
+<th>Semana</th>
+<th>Color</th>
+<th>Semana</th>
+<th>Color</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>Verde</td>
+<td>27</td>
+<td>Blanco</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Amarillo</td>
+<td>28</td>
+<td>Azul</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Blanco</td>
+<td>29</td>
+<td>Rojo</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Azul</td>
+<td>30</td>
+<td>Café</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Rojo</td>
+<td>31</td>
+<td>Negro</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Café</td>
+<td>32</td>
+<td>Naranja</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Negro</td>
+<td>33</td>
+<td>Verde</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Naranja</td>
+<td>34</td>
+<td>Amarillo</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Verde</td>
+<td>35</td>
+<td>Blanco</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Amarillo</td>
+<td>36</td>
+<td>Azul</td>
+</tr>
+<tr>
+<td>11</td>
+<td>Blanco</td>
+<td>37</td>
+<td>Rojo</td>
+</tr>
+<tr>
+<td>12</td>
+<td>Azul</td>
+<td>38</td>
+<td>Café</td>
+</tr>
+<tr>
+<td>13</td>
+<td>Rojo</td>
+<td>39</td>
+<td>Negro</td>
+</tr>
+<tr>
+<td>14</td>
+<td>Café</td>
+<td>40</td>
+<td>Naranja</td>
+</tr>
+<tr>
+<td>15</td>
+<td>Negro</td>
+<td>41</td>
+<td>Verde</td>
+</tr>
+<tr>
+<td>16</td>
+<td>Naranja</td>
+<td>42</td>
+<td>Amarillo</td>
+</tr>
+<tr>
+<td>17</td>
+<td>Verde</td>
+<td>43</td>
+<td>Blanco</td>
+</tr>
+<tr>
+<td>18</td>
+<td>Amarillo</td>
+<td>44</td>
+<td>Azul</td>
+</tr>
+<tr>
+<td>19</td>
+<td>Blanco</td>
+<td>45</td>
+<td>Rojo</td>
+</tr>
+<tr>
+<td>20</td>
+<td>Azul</td>
+<td>46</td>
+<td>Café</td>
+</tr>
+<tr>
+<td>21</td>
+<td>Rojo</td>
+<td>47</td>
+<td>Negro</td>
+</tr>
+<tr>
+<td>22</td>
+<td>Café</td>
+<td>48</td>
+<td>Naranja</td>
+</tr>
+<tr>
+<td>23</td>
+<td>Negro</td>
+<td>49</td>
+<td>Verde</td>
+</tr>
+<tr>
+<td>24</td>
+<td>Naranja</td>
+<td>50</td>
+<td>Amarillo</td>
+</tr>
+<tr>
+<td>25</td>
+<td>Verde</td>
+<td>51</td>
+<td>Blanco</td>
+</tr>
+<tr>
+<td>26</td>
+<td>Amarillo</td>
+<td>52</td>
+<td>Azul</td>
+</tr>
+</tbody></table>
+<h3>7.2 Pestaña: Cosecha</h3>
+<p>Muestra el seguimiento de cada semana: Encinte, Semitallo, Cortados, Pendientes y Proyección.</p>
+<h4>7.2.1 Registrar Semitallo</h4>
+<ol>
+<li>Haga clic en <strong>Registrar Semitallo/Corte</strong></li>
+<li>Seleccione:<ul>
+<li><strong>Semana de Encinte Referencia:</strong> Semana del encinte origen</li>
+<li><strong>Lote:</strong> Parcela donde se realizará</li>
+<li><strong>Tipo de Registro:</strong> Seleccione <strong>Semitallo (Sábado - Marcar racimos)</strong></li>
+<li><strong>Cantidad de Racimos:</strong> Número de racimos marcados</li>
+<li><strong>Notas:</strong> Observaciones opcionales</li>
+</ul>
+</li>
+<li>Haga clic en <strong>Guardar</strong></li>
+</ol>
+<h4>7.2.2 Registrar Corte</h4>
+<ol>
+<li>Haga clic en <strong>Registrar Semitallo/Corte</strong></li>
+<li>Seleccione:<ul>
+<li><strong>Semana de Encinte Referencia:</strong> Semana del encinte origen</li>
+<li><strong>Lote:</strong> Parcela donde se realizará</li>
+<li><strong>Tipo de Registro:</strong> Seleccione <strong>Cortado (Lunes - Cosecha)</strong></li>
+<li><strong>Cantidad de Racimos:</strong> Número de racimos cosechados</li>
+<li><strong>Notas:</strong> Observaciones opcionales</li>
+</ul>
+</li>
+<li>Haga clic en <strong>Guardar</strong></li>
+</ol>
+<h4>7.2.3 Regla de Validación - Sin Valores Negativos</h4>
+<p>El sistema valida que no se puedan registrar más racimos de los disponibles:</p>
+<ul>
+<li><strong>Disponibles = Encintados - Semitallo - Cortados</strong></li>
+<li>Si intenta registrar una cantidad mayor a los disponibles, el sistema mostrará un error indicando:<ul>
+<li>Cantidad disponible</li>
+<li>Total encintados</li>
+<li>Total semitallo</li>
+<li>Total cortados</li>
+</ul>
+</li>
+</ul>
+<h3>7.3 Pestaña: Proyección</h3>
+<p>Tabla resumen con la proyección de cosecha basada en datos de encinte:</p>
+<table>
+<thead>
+<tr>
+<th>Columna</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Semana Encinte</td>
+<td>Semana del encinte con su color</td>
+</tr>
+<tr>
+<td>Color</td>
+<td>Nombre del color de cinta</td>
+</tr>
+<tr>
+<td>Encintados</td>
+<td>Total de racimos encintados</td>
+</tr>
+<tr>
+<td>Semitallo</td>
+<td>Total de racimos marcados (semitallo)</td>
+</tr>
+<tr>
+<td>Cortados</td>
+<td>Total de racimos cosechados</td>
+</tr>
+<tr>
+<td>Pendientes</td>
+<td>Racimos aún por cosechar</td>
+</tr>
+<tr>
+<td>Proyección Corte</td>
+<td>Semanas estimadas de corte (mín-máx)</td>
+</tr>
+<tr>
+<td>Estado</td>
+<td>Completado / En Proceso / BARRIDO</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p><strong>BARRIDO:</strong> Indica que la proyección de corte supera la semana 52 del año.</p>
+</blockquote>
+<hr>
+<h2>8. Módulo Inventario</h2>
+<p><strong>Acceso:</strong> Solo Administrador</p>
+<h3>8.1 Ver Productos</h3>
+<ol>
+<li>Navegue a <strong>Inventario</strong> en el menú lateral</li>
+<li>Se muestra la lista de productos con:<ul>
+<li>Código</li>
+<li>Nombre</li>
+<li>Unidad de medida</li>
+<li>Stock mínimo</li>
+<li>Stock actual</li>
+<li>Estado (Activo/Inactivo)</li>
+<li>Acciones</li>
+</ul>
+</li>
+</ol>
+<h3>8.2 Crear Producto</h3>
+<ol>
+<li>Haga clic en <strong>Nuevo Producto</strong></li>
+<li>Complete:<ul>
+<li><strong>Código:</strong> Identificador único</li>
+<li><strong>Nombre:</strong> Nombre del producto/insumo</li>
+<li><strong>Descripción:</strong> Detalle del producto (opcional)</li>
+<li><strong>Unidad:</strong> Unidad de medida (ej: kg, litros, unidades)</li>
+<li><strong>Stock Mínimo:</strong> Cantidad mínima antes de generar alerta</li>
+</ul>
+</li>
+<li>Haga clic en <strong>Crear</strong></li>
+</ol>
+<h3>8.3 Editar/Desactivar Producto</h3>
+<ul>
+<li>Use los íconos de <strong>lápiz</strong> (editar) o <strong>basurero</strong> (desactivar)</li>
+</ul>
+<h3>8.4 Registrar Movimiento de Inventario</h3>
+<ol>
+<li>Haga clic en <strong>Nuevo Movimiento</strong></li>
+<li>Seleccione:<ul>
+<li><strong>Producto:</strong> Insumo a mover</li>
+<li><strong>Tipo:</strong> Entrada o Salida</li>
+<li><strong>Cantidad:</strong> Número de unidades</li>
+<li><strong>Lote:</strong> Parcela asociada (opcional)</li>
+<li><strong>Referencia:</strong> Número de orden o documento</li>
+<li><strong>Notas:</strong> Observaciones</li>
+</ul>
+</li>
+<li>Haga clic en <strong>Guardar</strong></li>
+</ol>
+<h3>8.5 Alertas de Stock Bajo</h3>
+<ul>
+<li>Los productos cuyo stock actual está por debajo del stock mínimo aparecen destacados en el Dashboard bajo &quot;Bajo Stock&quot;</li>
+<li>Se recomienda revisar periódicamente el inventario y reabastecer a tiempo</li>
+</ul>
+<hr>
+<h2>9. Módulo Órdenes</h2>
+<p><strong>Acceso:</strong> Solo Administrador
+<strong>Estado:</strong> En desarrollo</p>
+<p>Este módulo permitirá gestionar órdenes de embarque para la exportación de bananas. Funcionalidad pendiente de implementación.</p>
+<hr>
+<h2>10. Módulo Reportes</h2>
+<p><strong>Acceso:</strong> Solo Administrador
+<strong>Estado:</strong> En desarrollo</p>
+<p>Módulo pendiente para la generación de reportes exportables en PDF/Excel.</p>
+<hr>
+<h2>11. Configuración</h2>
+<p><strong>Acceso:</strong> Solo Administrador
+<strong>Estado:</strong> En desarrollo</p>
+<p>Módulo pendiente para configuración avanzada del sistema.</p>
+<hr>
+<h2>12. Gestión de Sesión</h2>
+<h3>12.1 Cambiar Contraseña</h3>
+<ol>
+<li>Use la funcionalidad de cambio de contraseña desde la API</li>
+<li>Proporcione su contraseña actual y la nueva contraseña</li>
+</ol>
+<h3>12.2 Cerrar Sesión</h3>
+<ol>
+<li>Haga clic en el botón <strong>Cerrar Sesión</strong> en la barra lateral inferior</li>
+<li>Será redirigido a la pantalla de login</li>
+</ol>
+<hr>
+<h2>Apéndice A: Referencia Rápida</h2>
+<h3>Atajos de Navegación</h3>
+<table>
+<thead>
+<tr>
+<th>Módulo</th>
+<th>Ruta</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Dashboard</td>
+<td>/dashboard</td>
+</tr>
+<tr>
+<td>Usuarios</td>
+<td>/users</td>
+</tr>
+<tr>
+<td>Lotes</td>
+<td>/lotes</td>
+</tr>
+<tr>
+<td>Labores</td>
+<td>/tareas</td>
+</tr>
+<tr>
+<td>Cosecha</td>
+<td>/cosecha</td>
+</tr>
+<tr>
+<td>Inventario</td>
+<td>/inventario</td>
+</tr>
+<tr>
+<td>Órdenes</td>
+<td>/ordenes</td>
+</tr>
+<tr>
+<td>Reportes</td>
+<td>/reportes</td>
+</tr>
+<tr>
+<td>Configuración</td>
+<td>/configuracion</td>
+</tr>
+</tbody></table>
+<h3>Permisos por Rol</h3>
+<table>
+<thead>
+<tr>
+<th>Módulo</th>
+<th align="center">Administrador</th>
+<th align="center">Supervisor</th>
+<th align="center">Obrero</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Dashboard</td>
+<td align="center">✅</td>
+<td align="center">✅</td>
+<td align="center">✅</td>
+</tr>
+<tr>
+<td>Usuarios</td>
+<td align="center">✅</td>
+<td align="center">❌</td>
+<td align="center">❌</td>
+</tr>
+<tr>
+<td>Lotes</td>
+<td align="center">✅</td>
+<td align="center">❌</td>
+<td align="center">❌</td>
+</tr>
+<tr>
+<td>Labores</td>
+<td align="center">✅</td>
+<td align="center">✅</td>
+<td align="center">✅</td>
+</tr>
+<tr>
+<td>Cosecha</td>
+<td align="center">✅</td>
+<td align="center">✅</td>
+<td align="center">✅</td>
+</tr>
+<tr>
+<td>Inventario</td>
+<td align="center">✅</td>
+<td align="center">❌</td>
+<td align="center">❌</td>
+</tr>
+<tr>
+<td>Órdenes</td>
+<td align="center">✅</td>
+<td align="center">❌</td>
+<td align="center">❌</td>
+</tr>
+<tr>
+<td>Reportes</td>
+<td align="center">✅</td>
+<td align="center">❌</td>
+<td align="center">❌</td>
+</tr>
+<tr>
+<td>Configuración</td>
+<td align="center">✅</td>
+<td align="center">❌</td>
+<td align="center">❌</td>
+</tr>
+</tbody></table>
+
+        </body>
+        </html>
+    

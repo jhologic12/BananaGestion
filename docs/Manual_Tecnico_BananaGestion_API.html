@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual Técnico - BananaGestion API</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 2cm;
+        }
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 100%;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #1a5f2a;
+            border-bottom: 3px solid #1a5f2a;
+            padding-bottom: 10px;
+            font-size: 28px;
+            page-break-after: avoid;
+        }
+        h2 {
+            color: #2d7a40;
+            border-left: 4px solid #1a5f2a;
+            padding-left: 10px;
+            margin-top: 30px;
+            page-break-after: avoid;
+        }
+        h3 {
+            color: #3d8b52;
+            page-break-after: avoid;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #1a5f2a 0%, #2d7a40 100%);
+            color: white;
+            border-radius: 10px;
+        }
+        .header h1 {
+            color: white;
+            border: none;
+            margin: 0;
+        }
+        .header .subtitle {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+        .header .version {
+            font-size: 14px;
+            opacity: 0.7;
+        }
+        .info-box {
+            background: #e8f5e9;
+            border-left: 4px solid #1a5f2a;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        .warning-box {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        .endpoint {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin: 15px 0;
+            page-break-inside: avoid;
+        }
+        .endpoint-header {
+            background: #424242;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px 5px 0 0;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .method {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        .method-get { background: #4caf50; }
+        .method-post { background: #2196f3; }
+        .method-put { background: #ff9800; }
+        .method-delete { background: #f44336; }
+        .endpoint-path {
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        .endpoint-roles {
+            font-size: 11px;
+            opacity: 0.8;
+            margin-left: auto;
+        }
+        .endpoint-body {
+            padding: 15px;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+        pre {
+            background: #263238;
+            color: #aed581;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-size: 12px;
+            page-break-inside: avoid;
+        }
+        pre code {
+            background: none;
+            padding: 0;
+            color: inherit;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 13px;
+            page-break-inside: avoid;
+        }
+        th {
+            background: #1a5f2a;
+            color: white;
+            padding: 10px;
+            text-align: left;
+        }
+        td {
+            border: 1px solid #ddd;
+            padding: 8px 10px;
+        }
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        .toc {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .toc ul {
+            list-style-type: none;
+            padding-left: 20px;
+        }
+        .toc li {
+            padding: 5px 0;
+        }
+        .toc a {
+            color: #1a5f2a;
+            text-decoration: none;
+        }
+        .toc a:hover {
+            text-decoration: underline;
+        }
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #1a5f2a;
+            text-align: center;
+            color: #666;
+            font-size: 12px;
+        }
+        @media print {
+            body {
+                padding: 0;
+            }
+            .endpoint {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>BANANAGESTION API</h1>
+        <div class="subtitle">Sistema de Gestión para Fincas Bananeras</div>
+        <div class="version">Versión 1.0 | Manual Técnico de la API REST</div>
+    </div>
+
+    <div class="toc">
+        <h2 style="border: none; padding: 0; margin-top: 0;">Tabla de Contenidos</h2>
+        <ul>
+            <li><a href="#introduccion">1. Introducción</a></li>
+            <li><a href="#autenticacion">2. Autenticación</a></li>
+            <li><a href="#usuarios">3. Gestión de Usuarios</a></li>
+            <li><a href="#lotes">4. Gestión de Lotes</a></li>
+            <li><a href="#tareas">5. Gestión de Tareas</a></li>
+            <li><a href="#cosecha">6. Módulo de Cosecha</a></li>
+            <li><a href="#inventario">7. Módulo de Inventario</a></li>
+            <li><a href="#codigos">8. Códigos de Error</a></li>
+        </ul>
+    </div>
+
+    <h1 id="introduccion">1. Introducción</h1>
+    
+    <div class="info-box">
+        <strong>Base URL:</strong> <code>http://localhost:5000</code><br>
+        <strong>Swagger UI:</strong> <code>http://localhost:5000/swagger</code><br>
+        <strong>Formato de respuesta:</strong> JSON
+    </div>
+
+    <h2>Roles del Sistema</h2>
+    <table>
+        <tr>
+            <th>Rol</th>
+            <th>Código</th>
+            <th>Descripción</th>
+            <th>Permisos</th>
+        </tr>
+        <tr>
+            <td>Administrador</td>
+            <td><code>Administrador</code></td>
+            <td>Control total del sistema</td>
+            <td>Todas las operaciones CRUD</td>
+        </tr>
+        <tr>
+            <td>Supervisor</td>
+            <td><code>Supervisor</code></td>
+            <td>Gestión operativa</td>
+            <td>Crear, leer, actualizar tareas y cosechas</td>
+        </tr>
+        <tr>
+            <td>Obrero</td>
+            <td><code>Obrero</code></td>
+            <td>Ejecución de tareas</td>
+            <td>Ver y completar tareas asignadas</td>
+        </tr>
+    </table>
+
+    <h2>Encabezados Requeridos</h2>
+    <table>
+        <tr>
+            <th>Encabezado</th>
+            <th>Valor</th>
+            <th>Descripción</th>
+        </tr>
+        <tr>
+            <td><code>Content-Type</code></td>
+            <td><code>application/json</code></td>
+            <td>Para peticiones con body JSON</td>
+        </tr>
+        <tr>
+            <td><code>Authorization</code></td>
+            <td><code>Bearer {token}</code></td>
+            <td>Token JWT para endpoints protegidos</td>
+        </tr>
+    </table>
+
+    <h1 id="autenticacion">2. Autenticación</h1>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method method-post">POST</span>
+            <span class="endpoint-path">/api/Auth/login</span>
+        </div>
+        <div class="endpoint-body">
+            <p>Iniciar sesión en el sistema y obtener token JWT.</p>
+            <h4>Request Body</h4>
+            <pre><code>{
+  "email": "usuario@ejemplo.com",
+  "password": "contraseña123"
+}</code></pre>
+            <h4>Response (200 OK)</h4>
+            <pre><code>{
+  "id": "uuid-del-usuario",
+  "email": "usuario@ejemplo.com",
+  "nombre": "Juan",
+  "apellido": "Pérez",
+  "rol": "Administrador",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}</code></pre>
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method method-post">POST</span>
+            <span class="endpoint-path">/api/Auth/register</span>
+        </div>
+        <div class="endpoint-body">
+            <p>Registrar un nuevo usuario en el sistema.</p>
+            <h4>Request Body</h4>
+            <pre><code>{
+  "email": "nuevo@ejemplo.com",
+  "password": "minimo6caracteres",
+  "nombre": "Nombre",
+  "apellido": "Apellido",
+  "telefono": "555-1234",
+  "rol": "Administrador" // Administrador | Supervisor | Obrero
+}</code></pre>
+            <h4>Response (200 OK)</h4>
+            <pre><code>{
+  "id": "uuid-generado",
+  "email": "nuevo@ejemplo.com",
+  "nombre": "Nombre",
+  "apellido": "Apellido",
+  "rol": "Administrador",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}</code></pre>
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method method-post">POST</span>
+            <span class="endpoint-path">/api/Auth/change-password</span>
+            <span class="endpoint-roles">[Autenticado]</span>
+        </div>
+        <div class="endpoint-body">
+            <p>Cambiar la contraseña del usuario autenticado.</p>
+            <h4>Headers</h4>
+            <code>Authorization: Bearer {token}</code>
+            <h4>Request Body</h4>
+            <pre><code>{
+  "currentPassword": "contraseñaActual",
+  "newPassword": "nuevaContraseña123"
+}</code></pre>
+        </div>
+    </div>
+
+    <h1 id="usuarios">3. Gestión de Usuarios</h1>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method method-get">GET</span>
+            <span class="endpoint-path">/api/Users</span>
+            <span class="endpoint-roles">[Administrador, Supervisor]</span>
+        </div>
+        <div class="endpoint-body">
+            <p>Obtener lista de todos los usuarios.</p>
+            <h4>Response</h4>
+            <pre><code>[{
+  "id": "uuid",
+  "email": "usuario@ejemplo.com",
+  "nombre": "Juan",
+  "apellido": "Pérez",
+  "telefono": "555-1234",
+  "rol": "Supervisor",
+  "activo": true,
+  "fechaCreacion": "2024-01-15T10:30:00Z",
+  "ultimoLogin": "2024-01-20T08:00:00Z"
+}]</code></pre>
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method method-get">GET</span>
+            <span class="endpoint-path">/api/Users/{id}</span>
+        </div>
+        <div class="endpoint-body">
+            <p>Obtener usuario por ID.</p>
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method method-get">GET</span>
+            <span class="endpoint-path">/api/Users/obreros</span>
+        </div>
+        <div class="endpoint-body">
+            <p>Obtener lista de usuarios con rol Obrero.</p>
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method method-get">GET</span>
+            <span class="endpoint-path">/api/Users/supervisores</span>
+        </div>
+        <div class="endpoint-body">
+            <p>Obtener lista de usuarios con rol Supervisor.</p>
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method method-put">PUT</span>
+            <span class="endpoint-path">/api/Users/{id}</span>
+        </div>
+        <div class="endpoint-body">
+            <p>Actualizar datos del usuario.</p>
+            <h4>Request Body</h4>
+            <pre><code>{
+  "nombre": "Nuevo Nombre",
+  "apellido": "Nuevo Apellido",
+  "telefono": "555-5678"
+}</code></pre>
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method method-delete">DELETE</span>
+            <span class="endpoint-path">/api/Users/{id}</span>
+            <span class="endpoint-roles">[Administrador]</span>
+        </div>
+        <div class="endpoint-body">
+            <p>Eliminar usuario (soft delete).</p>
+        </div>
+    </div>
+
+    <h1 id="lotes">4. Gestión de Lotes</h1>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method method-get">GET</span>
+            <span class="endpoint-path">/api/Lotes</span>
+        </div>
+        <div class="endpoint-body">
+            <p>Obtener todos los lotes.</p>
+            <h4>Response</h4>
+            <pre><code>[{
+  "id": "uuid",
+  "codigo": "LOTE-001",
+  "nombre": "Bloque Norte A",
+  "hectareas": 5.5,
+  "ubicacion": "Sector Norte",
+  "latitud": 10.123456,
+  "longitud": -75.123456,
+  "activo": true,
+  "fechaCreacion": "2024-01-10T00:00:00Z",
+  "notas": "Terreno fértil, buen drenaje"
+}]</code></pre>
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method method-get">GET</span>
+            <span class="endpoint-path">/api/Lotes/active</span>
+        </div>
+        <div class="endpoint-body">
+            <p>Obtener solo lotes activos.</p>
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method method-get">GET</span>
+            <span class="endpoint-path">/api/Lotes/{id}</span>
+        </div>
+        <div class="endpoint-body">
+            <p>Obtener lote por ID.</p>
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method method-post">POST</span>
+            <span class="endpoint-path">/api/Lotes</span>
+            <span class="endpoint-roles">[Administrador, Supervisor]</span>
+        </div>
+        <div class="endpoint-body">
+            <p>Crear un nuevo lote.</p>
+            <h4>Request Body</h4>
+            <pre><code>{
+  "codigo": "LOTE-002",
+  "nombre": "Bloque Sur B",
+  "hectareas": 3.25,
+  "ubicacion": "Sector Sur",
+  "latitud": 10.098765,
+  "longitud": -75.098765,
+  "notas": "Zona con sistema de riego"
+}</code></pre>
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method method-put">PUT</span>
+            <span class="endpoint-path">/api/Lotes/{id}</span>
+            <span class="endpoint-roles">[Administrador, Supervisor]</span>
+        </div>
+        <div class="endpoint-body">
+            <p>Actualizar información del lote.</p>
+            <h4>Request Body</h4>
+            <pre><code>{
+  "nombre": "Nombre Actualizado",
+  "hectareas": 4.0,
+  "activo": true,
+  "notas": "Nuevas notas"
+}</code></pre>
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method method-delete">DELETE</span>
+            <span class="endpoint-path">/api/Lotes/{id}</span>
+            <span class="endpoint-roles">[Administrador]</span>
+        </div>
+        <div class="endpoint-body">
+            <p>Eliminar lote.</p>
+        </div>
+    </div>
+
+    <h1 id="tareas">5. Gestión de Tareas</h1>
+
+    <h2>Configuración de Tareas</h2>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method method-get">GET</span>
+            <span class="endpoint-path">/api/Tareas/configs</span>
+        </div>
+        <div class="endpoint-body">
+            <p>Obtener todas las configuraciones de tareas disponibles.</p>
+            <h4>Response</h4>
+            <pre><code>[{
+  "id": "uuid",
+  "nombre": "Fumigación Plagas",
+  "descripcion": "Aplicación de fungicida",
+  "tipoLabor": "Fumigacion",
+  "tipo": "Preventiva",
+  "frecuenciaDias": 7,
+  "insumoCantidad": 2.5,
+  "insumoId": "uuid-insumo",
+  "insumoNombre": "Fungicida Manzate",
+  "requiereFoto": true,
+  "requiereFirma": true,
+  "requiereGps": true,
+  "activo": true
+}]</code></pre>
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method method-get">GET</span>
+            <span class="endpoint-path">/api/Tareas/configs/{id}</span>
+        </div>
+        <div class="endpoint-body">
+            <p>Obtener configuración de tarea por ID.</p>
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method method-post">POST</span>
+            <span class="endpoint-path">/api/Tareas/configs</span>
+            <span class="endpoint-roles">[Administrador, Supervisor]</span>
+        </div>
+        <div class="endpoint-body">
+            <p>Crear una nueva configuración de tarea.</p>
+            <h4>Request Body</h4>
+            <pre><code>{
+  "nombre": "Riego por Goteo",
+  "descripcion": "Activación del sistema de riego",
+  "tipoLabor": "Riego",
+  "tipo": "Mantenimiento",
+  "frecuenciaDias": 2,
+  "insumoCantidad": null,
+  "insumoId": null,
+  "requiereFoto": false,
+  "requiereFirma": true,
+  "requiereGps": true
+}</code></pre>
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method method-put">PUT</span>
+            <span class="endpoint-path">/api/Tareas/configs/{id}</span>
+            <span class="endpoint-roles">[Administrador, Supervisor]</span>
+        </div>
+        <div class="endpoint-body">
+            <p>Actualizar configuración de tarea.</p>
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method method-delete">DELETE</span>
+            <span class="endpoint-path">/api/Tareas/configs/{id}</span>
+            <span class="endpoint-roles">[Administrador, Supervisor]</span>
+        </div>
+        <div class="endpoint-body">
+            <p>Eliminar configuración de tarea.</p>
+        </div>
+    </div>
+
+    <h2>Asignaciones de Tareas</h2>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method method-get">GET</span>
+            <span class="endpoint-path">/api/Tareas/assignments</span>
+        </div>
+        <div class="endpoint-body">
+            <p>Obtener asignaciones pendientes. Filtro opcional por usuario.</p>
+            <h4>Query Parameters</h4>
+            <code>?userId=uuid</code> (opcional)
+            <h4>Response</h4>
+            <pre><code>[{
+  "id": "uuid",
+  "taskConfigId": "uuid-config",
+  "taskConfigNombre": "Fumigación Plagas",
+  "userId": "uuid-obrero",
+  "userNombre": "Carlos Mendoza",
+  "loteId": "uuid-lote",
+  "loteNombre": "Bloque Norte A",
+  "fechaProgramada": "2024-01-20T08:00:00Z",
+  "fechaCompletada": null,
+  "status": "Pendiente",
+  "notas": "Prioridad alta"
+}]</code></pre>
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method method-get">GET</span>
+            <span class="endpoint-path">/api/Tareas/assignments/range</span>
+        </div>
+        <div class="endpoint-body">
+            <p>Obtener asignaciones en rango de fechas.</p>
+            <h4>Query Parameters</h4>
+            <code>?start=2024-01-01&end=2024-01-31</code>
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method method-get">GET</span>
+            <span class="endpoint-path">/api/Tareas/assignments/overdue</span>
+        </div>
+        <div class="endpoint-body">
+            <p>Obtener asignaciones vencidas.</p>
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method method-post">POST</span>
+            <span class="endpoint-path">/api/Tareas/assignments</span>
+            <span class="endpoint-roles">[Administrador, Supervisor]</span>
+        </div>
+        <div class="endpoint-body">
+            <p>Crear nueva asignación de tarea.</p>
+            <h4>Request Body</h4>
+            <pre><code>{
+  "taskConfigId": "uuid-config",
+  "userId": "uuid-obrero",
+  "loteId": "uuid-lote",
+  "fechaProgramada": "2024-01-20T08:00:00Z",
+  "notas": "Usar equipo de protección"
+}</code></pre>
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method method-put">PUT</span>
+            <span class="endpoint-path">/api/Tareas/assignments/{id}/status</span>
+        </div>
+        <div class="endpoint-body">
+            <p>Actualizar estado de asignación.</p>
+            <h4>Query Parameters</h4>
+            <code>?status=Pendiente|EnProgreso|Completada|Cancelada</code>
+        </div>
+    </div>
+
+    <h2>Registro de Tareas (Logs)</h2>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method method-get">GET</span>
+            <span class="endpoint-path">/api/Tareas/logs/{assignmentId}</span>
+        </div>
+        <div class="endpoint-body">
+            <p>Obtener log de una asignación.</p>
+            <h4>Response</h4>
+            <pre><code>{
+  "id": "uuid",
+  "taskAssignmentId": "uuid-asignacion",
+  "fechaRegistro": "2024-01-20T10:30:00Z",
+  "fotoUrl": "/uploads/fotos/uuid.jpg",
+  "firmaUrl": "/uploads/firmas/uuid.png",
+  "latitud": 10.123456,
+  "longitud": -75.123456,
+  "observaciones": "Aplicación completada exitosamente",
+  "cantidadInsumoUtilizado": 2.5
+}</code></pre>
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method method-post">POST</span>
+            <span class="endpoint-path">/api/Tareas/logs</span>
+        </div>
+        <div class="endpoint-body">
+            <p>Registrar ejecución de tarea con foto y firma opcionales.</p>
+            <h4>Form Data (multipart/form-data)</h4>
+            <pre><code>{
+  "taskAssignmentId": "uuid-asignacion",
+  "observaciones": "Tarea completada",
+  "cantidadInsumoUtilizado": 2.5,
+  "latitud": 10.123456,
+  "longitud": -75.123456,
+  "foto": [archivo jpg/png],
+  "firma": [archivo png]
+}</code></pre>
+        </div>
+    </div>
+
+    <h1 id="cosecha">6. Módulo de Cosecha</h1>
+
+    <h2>Calendario de Cosecha</h2>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method method-get">GET</span>
+            <span class="endpoint-path">/api/Cosecha/calendar/{year}</span>
+        </div>
+        <div class="endpoint-body">
+            <p>Obtener calendario de cosecha del año.</p>
+            <h4>Response</h4>
+            <pre><code>[{
+  "id": "uuid",
+  "semana": 1,
+  "ano": 2024,
+  "colorCinta": "Rojo",
+  "fechaInicio": "2024-01-01",
+  "fechaFin": "2024-01-07",
+  "activo": true
+}]</code></pre>
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method method-get">GET</span>
+            <span class="endpoint-path">/api/Cosecha/calendar/week/{week}/{year}</span>
+        </div>
+        <div class="endpoint-body">
+            <p>Obtener información de una semana específica.</p>
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method method-post">POST</span>
+            <span class="endpoint-path">/api/Cosecha/calendar</span>
+            <span class="endpoint-roles">[Administrador, Supervisor]</span>
+        </div>
+        <div class="endpoint-body">
+            <p>Crear entrada de calendario.</p>
+            <h4>Request Body</h4>
+            <pre><code>{
+  "semana": 5,
+  "ano": 2024,
+  "colorCinta": "Azul",
+  "fechaInicio": "2024-01-29",
+  "fechaFin": "2024-02-04"
+}</code></pre>
+        </div>
+    </div>
+
+    <h2>Registros de Cosecha</h2>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method method-get">GET</span>
+            <span class="endpoint-path">/api/Cosecha/records</span>
+        </div>
+        <div class="endpoint-body">
+            <p>Obtener registros de cosecha por rango de fechas.</p>
+            <h4>Query Parameters</h4>
+            <code>?start=2024-01-01&end=2024-01-31</code>
+            <h4>Response</h4>
+            <pre><code>[{
+  "id": "uuid",
+  "harvestCalendarId": "uuid-calendario",
+  "semana": 3,
+  "loteId": "uuid-lote",
+  "loteNombre": "Bloque Norte A",
+  "userId": "uuid-obrero",
+  "userNombre": "Carlos Mendoza",
+  "fecha": "2024-01-15T14:00:00Z",
+  "cantidadRacimosEmbolsados": 50,
+  "cantidadRacimosCortados": 45,
+  "racimosPerdidos": 2,
+  "colorCinta": "Rojo",
+  "pesoTotal": 1125.5,
+  "notas": "Buena calidad",
+  "boxRecords": [...]
+}]</code></pre>
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method method-get">GET</span>
+            <span class="endpoint-path">/api/Cosecha/records/lote/{loteId}</span>
+        </div>
+        <div class="endpoint-body">
+            <p>Obtener registros de cosecha por lote.</p>
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method method-post">POST</span>
+            <span class="endpoint-path">/api/Cosecha/records</span>
+        </div>
+        <div class="endpoint-body">
+            <p>Crear registro de cosecha.</p>
+            <h4>Request Body</h4>
+            <pre><code>{
+  "harvestCalendarId": "uuid-calendario",
+  "loteId": "uuid-lote",
+  "userId": "uuid-obrero",
+  "fecha": "2024-01-15T14:00:00Z",
+  "cantidadRacimosEmbolsados": 50,
+  "cantidadRacimosCortados": 45,
+  "racimosPerdidos": 2,
+  "colorCinta": "Rojo",
+  "pesoTotal": 1125.5,
+  "notas": "Buena calidad general",
+  "boxRecords": [
+    {
+      "boxTypeId": "uuid-caja",
+      "cantidad": 10,
+      "pesoTotal": 500.0
+    }
+  ]
+}</code></pre>
+        </div>
+    </div>
+
+    <h2>Tipos de Caja</h2>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method method-get">GET</span>
+            <span class="endpoint-path">/api/Cosecha/boxtypes</span>
+        </div>
+        <div class="endpoint-body">
+            <p>Obtener tipos de caja disponibles.</p>
+            <h4>Response</h4>
+            <pre><code>[{
+  "id": "uuid",
+  "codigo": "CAJA-18",
+  "descripcion": "Caja de cartón 18 kg",
+  "capacidadKilos": 18,
+  "activo": true
+}]</code></pre>
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method method-post">POST</span>
+            <span class="endpoint-path">/api/Cosecha/boxtypes</span>
+            <span class="endpoint-roles">[Administrador, Supervisor]</span>
+        </div>
+        <div class="endpoint-body">
+            <p>Crear tipo de caja.</p>
+            <h4>Request Body</h4>
+            <pre><code>{
+  "codigo": "CAJA-22",
+  "descripcion": "Caja de cartón 22 kg",
+  "capacidadKilos": 22
+}</code></pre>
+        </div>
+    </div>
+
+    <h2>Órdenes de Embarque</h2>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method method-get">GET</span>
+            <span class="endpoint-path">/api/Cosecha/orders</span>
+        </div>
+        <div class="endpoint-body">
+            <p>Obtener órdenes de embarque.</p>
+            <h4>Response</h4>
+            <pre><code>[{
+  "id": "uuid",
+  "numeroOrden": "ORD-2024-001",
+  "semanaEmbarque": 5,
+  "fechaEmbarque": "2024-01-29T00:00:00Z",
+  "pdfUrl": "/uploads/ordenes/uuid.pdf",
+  "cliente": "Exportadora Bananos S.A.",
+  "notas": "Prioridad urgente",
+  "procesada": false,
+  "boxDetails": [...]
+}]</code></pre>
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method method-post">POST</span>
+            <span class="endpoint-path">/api/Cosecha/orders</span>
+            <span class="endpoint-roles">[Administrador, Supervisor]</span>
+        </div>
+        <div class="endpoint-body">
+            <p>Crear orden de embarque.</p>
+            <h4>Request Body</h4>
+            <pre><code>{
+  "numeroOrden": "ORD-2024-002",
+  "semanaEmbarque": 6,
+  "fechaEmbarque": "2024-02-05T00:00:00Z",
+  "cliente": "Distribuidora Tropical",
+  "pdfUrl": null,
+  "boxDetails": [
+    {
+      "boxTypeId": "uuid-caja",
+      "cantidadPlanificada": 100
+    }
+  ]
+}</code></pre>
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method method-get">GET</span>
+            <span class="endpoint-path">/api/Cosecha/projection</span>
+        </div>
+        <div class="endpoint-body">
+            <p>Obtener proyección de cosecha.</p>
+            <h4>Query Parameters</h4>
+            <code>?weeksAhead=4</code> (por defecto 4 semanas)
+            <h4>Response</h4>
+            <pre><code>{
+  "semana-1": 150,
+  "semana-2": 165,
+  "semana-3": 140,
+  "semana-4": 175
+}</code></pre>
+        </div>
+    </div>
+
+    <h1 id="inventario">7. Módulo de Inventario</h1>
+
+    <h2>Productos</h2>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method method-get">GET</span>
+            <span class="endpoint-path">/api/Inventario/products</span>
+        </div>
+        <div class="endpoint-body">
+            <p>Obtener todos los productos/insumos.</p>
+            <h4>Response</h4>
+            <pre><code>[{
+  "id": "uuid",
+  "codigo": "FUNG-001",
+  "nombre": "Fungicida Manzate",
+  "descripcion": "Fungicida protector",
+  "unidad": "Litros",
+  "stockMinimo": 50.0,
+  "stockActual": 75.5,
+  "activo": true,
+  "isLowStock": false
+}]</code></pre>
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method method-get">GET</span>
+            <span class="endpoint-path">/api/Inventario/products/low-stock</span>
+        </div>
+        <div class="endpoint-body">
+            <p>Obtener productos con stock bajo (menor al mínimo).</p>
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method method-get">GET</span>
+            <span class="endpoint-path">/api/Inventario/products/{id}</span>
+        </div>
+        <div class="endpoint-body">
+            <p>Obtener producto por ID.</p>
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method method-post">POST</span>
+            <span class="endpoint-path">/api/Inventario/products</span>
+            <span class="endpoint-roles">[Administrador, Supervisor]</span>
+        </div>
+        <div class="endpoint-body">
+            <p>Crear nuevo producto.</p>
+            <h4>Request Body</h4>
+            <pre><code>{
+  "codigo": "HERB-001",
+  "nombre": "Herbicida Glifosato",
+  "descripcion": "Control de malezas",
+  "unidad": "Litros",
+  "stockMinimo": 25.0
+}</code></pre>
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method method-put">PUT</span>
+            <span class="endpoint-path">/api/Inventario/products/{id}</span>
+            <span class="endpoint-roles">[Administrador, Supervisor]</span>
+        </div>
+        <div class="endpoint-body">
+            <p>Actualizar producto.</p>
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method method-delete">DELETE</span>
+            <span class="endpoint-path">/api/Inventario/products/{id}</span>
+            <span class="endpoint-roles">[Administrador]</span>
+        </div>
+        <div class="endpoint-body">
+            <p>Eliminar producto.</p>
+        </div>
+    </div>
+
+    <h2>Movimientos de Inventario</h2>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method method-get">GET</span>
+            <span class="endpoint-path">/api/Inventario/movements</span>
+        </div>
+        <div class="endpoint-body">
+            <p>Obtener historial de movimientos.</p>
+            <h4>Query Parameters</h4>
+            <pre><code>?productId=uuid        // opcional
+?start=2024-01-01      // opcional
+?end=2024-01-31        // opcional</code></pre>
+            <h4>Response</h4>
+            <pre><code>[{
+  "id": "uuid",
+  "productId": "uuid-producto",
+  "productNombre": "Fungicida Manzate",
+  "loteId": "uuid-lote",
+  "loteNombre": "Bloque Norte A",
+  "userId": "uuid-usuario",
+  "userNombre": "Carlos Mendoza",
+  "tipo": "Entrada",
+  "cantidad": 100.0,
+  "stockAnterior": 50.0,
+  "stockNuevo": 150.0,
+  "referencia": "OC-2024-001",
+  "notas": "Compra a proveedor",
+  "fecha": "2024-01-15T10:30:00Z"
+}]</code></pre>
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method method-post">POST</span>
+            <span class="endpoint-path">/api/Inventario/movements</span>
+            <span class="endpoint-roles">[Administrador, Supervisor]</span>
+        </div>
+        <div class="endpoint-body">
+            <p>Registrar movimiento de inventario (entrada o salida).</p>
+            <h4>Request Body</h4>
+            <pre><code>{
+  "productId": "uuid-producto",
+  "tipo": "Entrada",      // Entrada | Salida
+  "cantidad": 50.0,
+  "loteId": "uuid-lote",  // opcional
+  "referencia": "OC-2024-002",
+  "notas": "Devolución de almacén"
+}</code></pre>
+        </div>
+    </div>
+
+    <h1 id="codigos">8. Códigos de Error</h1>
+
+    <table>
+        <tr>
+            <th>Código HTTP</th>
+            <th>Descripción</th>
+        </tr>
+        <tr>
+            <td><code>200</code></td>
+            <td>Operación exitosa</td>
+        </tr>
+        <tr>
+            <td><code>201</code></td>
+            <td>Recurso creado exitosamente</td>
+        </tr>
+        <tr>
+            <td><code>400</code></td>
+            <td>Bad Request - Datos inválidos o faltantes</td>
+        </tr>
+        <tr>
+            <td><code>401</code></td>
+            <td>Unauthorized - Token inválido o expirado</td>
+        </tr>
+        <tr>
+            <td><code>403</code></td>
+            <td>Forbidden - No tiene permisos para esta acción</td>
+        </tr>
+        <tr>
+            <td><code>404</code></td>
+            <td>Not Found - Recurso no encontrado</td>
+        </tr>
+        <tr>
+            <td><code>409</code></td>
+            <td>Conflict - Recurso duplicado</td>
+        </tr>
+        <tr>
+            <td><code>500</code></td>
+            <td>Internal Server Error - Error del servidor</td>
+        </tr>
+    </table>
+
+    <h2>Formato de Error</h2>
+    <pre><code>{
+  "type": "https://tools.ietf.org/html/rfc7231#section-6.5.1",
+  "title": "Bad Request",
+  "status": 400,
+  "detail": "La solicitud no pudo ser procesada",
+  "errors": {
+    "Email": ["El campo Email es requerido"]
+  }
+}</code></pre>
+
+    <div class="footer">
+        <p><strong>BananaGestion API</strong> - Sistema de Gestión para Fincas Bananeras</p>
+        <p>Versión 1.0 | Documentación técnica</p>
+        <p>Para más información, consulte Swagger UI en <code>http://localhost:5000/swagger</code></p>
+    </div>
+</body>
+</html>

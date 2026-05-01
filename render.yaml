@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: bananagestion-api
+    env: docker
+    dockerfilePath: docker/Dockerfile.api
+    dockerContext: .
+    autoDeploy: true
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ConnectionStrings__DefaultConnection
+        sync: false
+      - key: Jwt__Key
+        sync: false
+      - key: Jwt__Issuer
+        value: BananaGestion
+      - key: Jwt__Audience
+        value: BananaGestionApp
+      - key: Jwt__ExpireMinutes
+        value: "60"
+      - key: AllowedOrigins__0
+        sync: false

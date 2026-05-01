@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual de Usuario - BananaGestion Frontend</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 2cm;
+        }
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 100%;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #1a5f2a;
+            border-bottom: 3px solid #1a5f2a;
+            padding-bottom: 10px;
+            font-size: 26px;
+            page-break-after: avoid;
+        }
+        h2 {
+            color: #2d7a40;
+            border-left: 4px solid #1a5f2a;
+            padding-left: 10px;
+            margin-top: 25px;
+            page-break-after: avoid;
+        }
+        h3 {
+            color: #3d8b52;
+            page-break-after: avoid;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, #1a5f2a 0%, #2d7a40 100%);
+            color: white;
+            border-radius: 10px;
+        }
+        .header h1 {
+            color: white;
+            border: none;
+            margin: 0;
+        }
+        .screen {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin: 20px 0;
+            page-break-inside: avoid;
+            background: #fafafa;
+        }
+        .screen-header {
+            background: #f5f5f5;
+            padding: 12px 20px;
+            border-radius: 8px 8px 0 0;
+            border-bottom: 1px solid #ddd;
+            font-weight: bold;
+            color: #555;
+        }
+        .screen-content {
+            padding: 20px;
+        }
+        .mockup {
+            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+            padding: 30px;
+            color: white;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .mockup-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .mockup-subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        .mockup-nav {
+            background: rgba(255,255,255,0.2);
+            border-radius: 20px;
+            padding: 10px 20px;
+            margin-top: 20px;
+            display: inline-block;
+        }
+        .mockup-form {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            margin-top: 20px;
+            text-align: left;
+            color: #333;
+        }
+        .mockup-input {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 10px 15px;
+            margin-bottom: 12px;
+            color: #666;
+        }
+        .mockup-button {
+            background: #1a5f2a;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 25px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .mockup-sidebar {
+            background: #1a5f2a;
+            width: 200px;
+            border-radius: 8px 0 0 8px;
+            padding: 20px;
+            text-align: left;
+        }
+        .mockup-menu-item {
+            padding: 10px 15px;
+            margin: 5px 0;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+        .mockup-menu-item.active {
+            background: rgba(255,255,255,0.3);
+        }
+        .mockup-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            color: #333;
+        }
+        .mockup-table {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            color: #333;
+        }
+        .mockup-table-row {
+            display: flex;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            font-size: 13px;
+        }
+        .mockup-stat {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            color: #333;
+        }
+        .info-box {
+            background: #e8f5e9;
+            border-left: 4px solid #1a5f2a;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        .warning-box {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        .step {
+            background: #f5f5f5;
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin: 10px 0;
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+        }
+        .step-number {
+            background: #1a5f2a;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        .step-content {
+            flex: 1;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 13px;
+        }
+        th {
+            background: #1a5f2a;
+            color: white;
+            padding: 10px;
+            text-align: left;
+        }
+        td {
+            border: 1px solid #ddd;
+            padding: 8px 10px;
+        }
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        .toc {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .toc ul {
+            list-style-type: none;
+            padding-left: 20px;
+        }
+        .toc li {
+            padding: 5px 0;
+        }
+        .role-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        .role-admin { background: #ffebee; color: #c62828; }
+        .role-supervisor { background: #e3f2fd; color: #1565c0; }
+        .role-obrero { background: #e8f5e9; color: #2e7d32; }
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #1a5f2a;
+            text-align: center;
+            color: #666;
+            font-size: 12px;
+        }
+        @media print {
+            body { padding: 0; }
+            .screen { page-break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>BANANAGESTION</h1>
+        <div style="font-size: 20px; margin-top: 10px;">Manual de Usuario - Aplicación Web</div>
+        <div style="font-size: 14px; opacity: 0.9; margin-top: 10px;">Versión 1.0 | Guía Completa de Uso</div>
+    </div>
+
+    <div class="toc">
+        <h2 style="border: none; padding: 0; margin-top: 0;">Tabla de Contenidos</h2>
+        <ul>
+            <li><a href="#introduccion">1. Introducción</a></li>
+            <li><a href="#menu-lateral">2. Menú Lateral y Navegación</a></li>
+            <li><a href="#login">3. Iniciar Sesión</a></li>
+            <li><a href="#registro">4. Registro de Usuarios</a></li>
+            <li><a href="#dashboard">5. Dashboard - Panel Principal</a></li>
+            <li><a href="#usuarios">6. Gestión de Usuarios</a></li>
+            <li><a href="#lotes">7. Gestión de Lotes</a></li>
+            <li><a href="#tareas">8. Gestión de Labores/Tareas</a></li>
+            <li><a href="#cosecha">9. Módulo de Cosecha</a></li>
+            <li><a href="#inventario">10. Módulo de Inventario</a></li>
+            <li><a href="#roles">11. Permisos por Rol</a></li>
+        </ul>
+    </div>
+
+    <h1 id="introduccion">1. Introducción</h1>
+
+    <p>BananaGestion es una aplicación web diseñada para la gestión integral de fincas bananeras. Permite administrar trabajadores, lotes de terreno, labores culturales, registro de cosechas y control de inventario de insumos.</p>
+
+    <div class="info-box">
+        <strong>Requisitos:</strong>
+        <ul style="margin: 10px 0 0 20px;">
+            <li>Navegador moderno (Chrome, Firefox, Edge, Safari)</li>
+            <li>Conexión a internet para acceder al servidor</li>
+            <li>Cuenta de usuario activa proporcionada por el administrador</li>
+        </ul>
+    </div>
+
+    <h1 id="menu-lateral">2. Menú Lateral y Navegación</h1>
+
+    <p>Al iniciar sesión, el usuario ve una interfaz con un menú lateral izquierdo que contiene las siguientes opciones:</p>
+
+    <table>
+        <tr>
+            <th>Icono</th>
+            <th>Módulo</th>
+            <th>Descripción</th>
+            <th>Roles</th>
+        </tr>
+        <tr>
+            <td>📊</td>
+            <td>Dashboard</td>
+            <td>Panel principal con resumen de métricas</td>
+            <td><span class="role-badge role-admin">Todos</span></td>
+        </tr>
+        <tr>
+            <td>👥</td>
+            <td>Usuarios</td>
+            <td>Gestión de cuentas de usuario</td>
+            <td><span class="role-badge role-admin">Admin</span> <span class="role-badge role-supervisor">Supervisor</span></td>
+        </tr>
+        <tr>
+            <td>📍</td>
+            <td>Lotes</td>
+            <td>Administración de parcelas</td>
+            <td><span class="role-badge role-admin">Todos</span></td>
+        </tr>
+        <tr>
+            <td>📋</td>
+            <td>Labores</td>
+            <td>Tareas y asignaciones</td>
+            <td><span class="role-badge role-admin">Todos</span></td>
+        </tr>
+        <tr>
+            <td>✂️</td>
+            <td>Cosecha</td>
+            <td>Registro de cosecha y calendario</td>
+            <td><span class="role-badge role-admin">Todos</span></td>
+        </tr>
+        <tr>
+            <td>📦</td>
+            <td>Inventario</td>
+            <td>Control de productos e insumos</td>
+            <td><span class="role-badge role-admin">Todos</span></td>
+        </tr>
+        <tr>
+            <td>🛒</td>
+            <td>Órdenes</td>
+            <td>Gestión de órdenes de embarque</td>
+            <td><span class="role-badge role-admin">Todos</span></td>
+        </tr>
+        <tr>
+            <td>📈</td>
+            <td>Reportes</td>
+            <td>Informes y estadísticas</td>
+            <td><span class="role-badge role-admin">Admin</span> <span class="role-badge role-supervisor">Supervisor</span></td>
+        </tr>
+        <tr>
+            <td>⚙️</td>
+            <td>Configuración</td>
+            <td>Parámetros del sistema</td>
+            <td><span class="role-badge role-admin">Admin</span></td>
+        </tr>
+    </table>
+
+    <div class="warning-box">
+        <strong>Nota:</strong> Los menús se muestran u ocultan según el rol del usuario. Los Obreros solo ven Dashboard, Labores y Cosecha.
+    </div>
+
+    <h1 id="login">3. Iniciar Sesión</h1>
+
+    <div class="screen">
+        <div class="screen-header">Pantalla: Login</div>
+        <div class="screen-content">
+            <div class="mockup">
+                <div class="mockup-title">BananaGestion</div>
+                <div class="mockup-subtitle">Gestión de Finca</div>
+                <div class="mockup-form" style="max-width: 350px; margin: 0 auto;">
+                    <div style="font-size: 18px; font-weight: bold; text-align: center; margin-bottom: 20px;">Iniciar Sesión</div>
+                    <div class="mockup-input">📧 correo@ejemplo.com</div>
+                    <div class="mockup-input">🔒 ••••••••</div>
+                    <div style="text-align: center;">
+                        <div class="mockup-button">Iniciar Sesión</div>
+                    </div>
+                    <div style="text-align: center; margin-top: 15px; font-size: 13px; color: #666;">
+                        ¿No tienes cuenta? <a href="#" style="color: #1a5f2a;">Regístrate</a>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Descripción de la Pantalla</h3>
+            <p>La pantalla de login es la página inicial de la aplicación. Presenta un diseño limpio y minimalista con el logotipo de BananaGestion.</p>
+
+            <h3>Campos del Formulario</h3>
+            <table>
+                <tr>
+                    <th>Campo</th>
+                    <th>Tipo</th>
+                    <th>Validación</th>
+                    <th>Descripción</th>
+                </tr>
+                <tr>
+                    <td>Email</td>
+                    <td>Texto / Email</td>
+                    <td>Requerido, formato email</td>
+                    <td>Correo electrónico registrado en el sistema</td>
+                </tr>
+                <tr>
+                    <td>Contraseña</td>
+                    <td>Password</td>
+                    <td>Requerido</td>
+                    <td>Clave de acceso personal</td>
+                </tr>
+            </table>
+
+            <h3>Flujo de Uso</h3>
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <strong>Ingrese su email</strong><br>
+                    Escriba el correo electrónico asociado a su cuenta (ej: <code>juan.perez@finca.com</code>)
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <strong>Ingrese su contraseña</strong><br>
+                    Escriba su clave de acceso. Los caracteres se ocultan por seguridad.
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <strong>Click en "Iniciar Sesión"</strong><br>
+                    Se validarán las credenciales y se redireccionará al Dashboard si son correctas.
+                </div>
+            </div>
+
+            <div class="warning-box">
+                <strong>Mensajes de error comunes:</strong>
+                <ul style="margin: 10px 0 0 20px;">
+                    <li><code>"Email requerido"</code> - No se ingresó email</li>
+                    <li><code>"Contraseña requerida"</code> - No se ingresó contraseña</li>
+                    <li><code>"Credenciales inválidas"</code> - Email o contraseña incorrectos</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <h1 id="registro">4. Registro de Usuarios</h1>
+
+    <div class="screen">
+        <div class="screen-header">Pantalla: Registro</div>
+        <div class="screen-content">
+            <div class="mockup">
+                <div class="mockup-title">BananaGestion</div>
+                <div class="mockup-form" style="max-width: 400px; margin: 0 auto;">
+                    <div style="font-size: 18px; font-weight: bold; text-align: center; margin-bottom: 20px;">Crear Cuenta</div>
+                    <div style="display: flex; gap: 10px;">
+                        <div class="mockup-input" style="flex:1;">Nombre</div>
+                        <div class="mockup-input" style="flex:1;">Apellido</div>
+                    </div>
+                    <div class="mockup-input">📧 correo@ejemplo.com</div>
+                    <div class="mockup-input">📱 +1234567890</div>
+                    <div class="mockup-input">▼ Seleccionar Rol</div>
+                    <div class="mockup-input">🔒 ••••••••</div>
+                    <div class="mockup-input">🔒 ••••••••</div>
+                    <div style="text-align: center;">
+                        <div class="mockup-button">Crear Cuenta</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Campos del Formulario</h3>
+            <table>
+                <tr>
+                    <th>Campo</th>
+                    <th>Tipo</th>
+                    <th>Validación</th>
+                </tr>
+                <tr>
+                    <td>Nombre</td>
+                    <td>Texto</td>
+                    <td>Requerido</td>
+                </tr>
+                <tr>
+                    <td>Apellido</td>
+                    <td>Texto</td>
+                    <td>Requerido</td>
+                </tr>
+                <tr>
+                    <td>Email</td>
+                    <td>Email</td>
+                    <td>Requerido, formato válido, único</td>
+                </tr>
+                <tr>
+                    <td>Teléfono</td>
+                    <td>Tel</td>
+                    <td>Opcional</td>
+                </tr>
+                <tr>
+                    <td>Rol</td>
+                    <td>Select</td>
+                    <td>Requerido: Obrero, Supervisor, Administrador</td>
+                </tr>
+                <tr>
+                    <td>Contraseña</td>
+                    <td>Password</td>
+                    <td>Requerido, mínimo 6 caracteres</td>
+                </tr>
+                <tr>
+                    <td>Confirmar Contraseña</td>
+                    <td>Password</td>
+                    <td>Debe coincidir con contraseña</td>
+                </tr>
+            </table>
+
+            <h3>Roles Disponibles</h3>
+            <table>
+                <tr>
+                    <th>Rol</th>
+                    <th>Descripción</th>
+                </tr>
+                <tr>
+                    <td><span class="role-badge role-obrero">Obrero</span></td>
+                    <td>Trabajadores de campo. Pueden ver y ejecutar tareas asignadas.</td>
+                </tr>
+                <tr>
+                    <td><span class="role-badge role-supervisor">Supervisor</span></td>
+                    <td>Encargados de área. Crean y supervisan tareas, registran cosechas.</td>
+                </tr>
+                <tr>
+                    <td><span class="role-badge role-admin">Administrador</span></td>
+                    <td>Control total. Gestiona usuarios, configuración y todos los módulos.</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <h1 id="dashboard">5. Dashboard - Panel Principal</h1>
+
+    <div class="screen">
+        <div class="screen-header">Pantalla: Dashboard</div>
+        <div class="screen-content">
+            <div style="display: flex; gap: 20px;">
+                <div class="mockup-sidebar">
+                    <div style="font-weight: bold; margin-bottom: 15px;">BananaGestion</div>
+                    <div class="mockup-menu-item active">📊 Dashboard</div>
+                    <div class="mockup-menu-item">👥 Usuarios</div>
+                    <div class="mockup-menu-item">📍 Lotes</div>
+                    <div class="mockup-menu-item">📋 Labores</div>
+                    <div class="mockup-menu-item">✂️ Cosecha</div>
+                    <div class="mockup-menu-item">📦 Inventario</div>
+                    <div style="margin-top: 30px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.3);">
+                        <div style="font-size: 12px;">Juan Pérez</div>
+                        <div style="font-size: 10px; opacity: 0.7;">Administrador</div>
+                    </div>
+                </div>
+                <div style="flex: 1;">
+                    <div style="font-size: 22px; font-weight: bold; margin-bottom: 20px; color: #333;">Dashboard</div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px;">
+                        <div class="mockup-stat">
+                            <div style="font-size: 12px; color: #666;">Tareas Pendientes</div>
+                            <div style="font-size: 28px; font-weight: bold; color: #1976d2;">12</div>
+                        </div>
+                        <div class="mockup-stat">
+                            <div style="font-size: 12px; color: #666;">Tareas Vencidas</div>
+                            <div style="font-size: 28px; font-weight: bold; color: #d32f2f;">3</div>
+                        </div>
+                        <div class="mockup-stat">
+                            <div style="font-size: 12px; color: #666;">Racimos del Mes</div>
+                            <div style="font-size: 28px; font-weight: bold; color: #388e3c;">1,247</div>
+                        </div>
+                        <div class="mockup-stat">
+                            <div style="font-size: 12px; color: #666;">Bajo Stock</div>
+                            <div style="font-size: 28px; font-weight: bold; color: #f57c00;">5</div>
+                        </div>
+                        <div class="mockup-stat">
+                            <div style="font-size: 12px; color: #666;">Obreros Activos</div>
+                            <div style="font-size: 28px; font-weight: bold; color: #7b1fa2;">8</div>
+                        </div>
+                        <div class="mockup-stat">
+                            <div style="font-size: 12px; color: #666;">Lotes Activos</div>
+                            <div style="font-size: 28px; font-weight: bold; color: #00796b;">6</div>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div class="mockup-card">
+                            <div style="font-weight: bold; margin-bottom: 10px;">Proyección de Cosecha</div>
+                            <div style="display: flex; justify-content: space-between; margin: 8px 0;">
+                                <span>Semana 1</span>
+                                <span style="color: #388e3c;">150 racimos</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin: 8px 0;">
+                                <span>Semana 2</span>
+                                <span style="color: #388e3c;">165 racimos</span>
+                            </div>
+                        </div>
+                        <div class="mockup-card">
+                            <div style="font-weight: bold; margin-bottom: 10px;">Actividad Reciente</div>
+                            <div style="font-size: 13px; padding: 8px 0; border-bottom: 1px solid #eee;">
+                                Fumigación Lote Norte
+                                <span style="float: right; background: #e3f2fd; padding: 2px 8px; border-radius: 10px; font-size: 11px;">Pendiente</span>
+                            </div>
+                            <div style="font-size: 13px; padding: 8px 0; border-bottom: 1px solid #eee;">
+                                Riego Bloque Sur
+                                <span style="float: right; background: #e8f5e9; padding: 2px 8px; border-radius: 10px; font-size: 11px;">Completada</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+            <h3>Métricas Mostradas</h3>
+            <table>
+                <tr>
+                    <th>Métrica</th>
+                    <th>Descripción</th>
+                    <th>Icono</th>
+                </tr>
+                <tr>
+                    <td>Tareas Pendientes</td>
+                    <td>Número de asignaciones no completadas</td>
+                    <td>📋 Azul</td>
+                </tr>
+                <tr>
+                    <td>Tareas Vencidas</td>
+                    <td>Asignaciones cuya fecha límite pasó sin completar</td>
+                    <td>⚠️ Rojo</td>
+                </tr>
+                <tr>
+                    <td>Racimos del Mes</td>
+                    <td>Total de racimos cosechados en el mes actual</td>
+                    <td>✂️ Verde</td>
+                </tr>
+                <tr>
+                    <td>Bajo Stock</td>
+                    <td>Productos cuyo stock está por debajo del mínimo</td>
+                    <td>📦 Naranja</td>
+                </tr>
+                <tr>
+                    <td>Obreros Activos</td>
+                    <td>Cantidad de trabajadores registrados activos</td>
+                    <td>👷 Púrpura</td>
+                </tr>
+                <tr>
+                    <td>Lotes Activos</td>
+                    <td>Número de parcelas en producción</td>
+                    <td>📍 Verde</td>
+                </tr>
+            </table>
+
+    <h1 id="usuarios">6. Gestión de Usuarios</h1>
+
+    <div class="screen">
+        <div class="screen-header">Pantalla: Usuarios</div>
+        <div class="screen-content">
+            <div style="display: flex; gap: 20px;">
+                <div style="flex: 1;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <div style="font-size: 22px; font-weight: bold; color: #333;">Usuarios</div>
+                        <div style="background: #1a5f2a; color: white; padding: 8px 15px; border-radius: 6px; font-size: 13px;">+ Nuevo Usuario</div>
+                    </div>
+                    
+                    <div class="mockup-table">
+                        <div style="display: flex; background: #f5f5f5; padding: 12px; border-radius: 6px 6px 0 0; font-weight: bold; font-size: 13px;">
+                            <div style="flex: 2;">Nombre</div>
+                            <div style="flex: 2;">Email</div>
+                            <div style="flex: 1;">Rol</div>
+                            <div style="flex: 1;">Estado</div>
+                            <div style="flex: 1;">Acciones</div>
+                        </div>
+                        <div class="mockup-table-row">
+                            <div style="flex: 2;">Juan Pérez</div>
+                            <div style="flex: 2;">juan@finca.com</div>
+                            <div style="flex: 1;"><span class="role-badge role-admin">Admin</span></div>
+                            <div style="flex: 1;"><span style="color: #388e3c;">● Activo</span></div>
+                            <div style="flex: 1;">✏️ 🗑️</div>
+                        </div>
+                        <div class="mockup-table-row">
+                            <div style="flex: 2;">María López</div>
+                            <div style="flex: 2;">maria@finca.com</div>
+                            <div style="flex: 1;"><span class="role-badge role-supervisor">Supervisor</span></div>
+                            <div style="flex: 1;"><span style="color: #388e3c;">● Activo</span></div>
+                            <div style="flex: 1;">✏️ 🗑️</div>
+                        </div>
+                        <div class="mockup-table-row">
+                            <div style="flex: 2;">Carlos Ruiz</div>
+                            <div style="flex: 2;">carlos@finca.com</div>
+                            <div style="flex: 1;"><span class="role-badge role-obrero">Obrero</span></div>
+                            <div style="flex: 1;"><span style="color: #388e3c;">● Activo</span></div>
+                            <div style="flex: 1;">✏️ 🗑️</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                </div>
+            </div>
+
+            <h3>Acciones Disponibles</h3>
+            <table>
+                <tr>
+                    <th>Acción</th>
+                    <th>Descripción</th>
+                    <th>Roles con Acceso</th>
+                </tr>
+                <tr>
+                    <td>Ver Usuarios</td>
+                    <td>Lista todos los usuarios registrados</td>
+                    <td>Administrador, Supervisor</td>
+                </tr>
+                <tr>
+                    <td>Crear Usuario</td>
+                    <td>Registra un nuevo trabajador</td>
+                    <td>Administrador, Supervisor</td>
+                </tr>
+                <tr>
+                    <td>Editar Usuario</td>
+                    <td>Modifica datos del perfil</td>
+                    <td>Todos (solo sus propios datos)</td>
+                </tr>
+                <tr>
+                    <td>Eliminar Usuario</td>
+                    <td>Desactiva una cuenta</td>
+                    <td>Solo Administrador</td>
+                </tr>
+            </table>
+
+            <h3>Modal: Crear/Editar Usuario</h3>
+            <p>Al hacer clic en "Nuevo Usuario" o editar uno existente, aparece un formulario modal con los campos:</p>
+            <ul>
+                <li><strong>Nombre:</strong> Primer nombre del usuario</li>
+                <li><strong>Apellido:</strong> Apellido del usuario</li>
+                <li><strong>Email:</strong> Correo electrónico (único en el sistema)</li>
+                <li><strong>Teléfono:</strong> Número de contacto (opcional)</li>
+                <li><strong>Rol:</strong> Tipo de cuenta (Obrero, Supervisor, Administrador)</li>
+            </ul>
+        </div>
+    </div>
+
+    <h1 id="lotes">7. Gestión de Lotes</h1>
+
+    <div class="screen">
+        <div class="screen-header">Pantalla: Lotes</div>
+        <div class="screen-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <div style="font-size: 22px; font-weight: bold; color: #333;">Lotes</div>
+                <div style="background: #1a5f2a; color: white; padding: 8px 15px; border-radius: 6px; font-size: 13px;">+ Nuevo Lote</div>
+            </div>
+            
+            <div class="mockup-table">
+                <div style="display: flex; background: #f5f5f5; padding: 12px; border-radius: 6px 6px 0 0; font-weight: bold; font-size: 13px;">
+                    <div style="flex: 1;">Código</div>
+                    <div style="flex: 2;">Nombre</div>
+                    <div style="flex: 1;">Hectáreas</div>
+                    <div style="flex: 1;">Ubicación</div>
+                    <div style="flex: 1;">Estado</div>
+                    <div style="flex: 1;">Acciones</div>
+                </div>
+                <div class="mockup-table-row">
+                    <div style="flex: 1; font-weight: bold;">LOTE-001</div>
+                    <div style="flex: 2;">Bloque Norte A</div>
+                    <div style="flex: 1;">5.5 ha</div>
+                    <div style="flex: 1;">Sector Norte</div>
+                    <div style="flex: 1;"><span style="background: #e8f5e9; color: #2e7d32; padding: 2px 8px; border-radius: 10px; font-size: 11px;">Activo</span></div>
+                    <div style="flex: 1;">✏️ 🗑️</div>
+                </div>
+                <div class="mockup-table-row">
+                    <div style="flex: 1; font-weight: bold;">LOTE-002</div>
+                    <div style="flex: 2;">Bloque Sur B</div>
+                    <div style="flex: 1;">3.25 ha</div>
+                    <div style="flex: 1;">Sector Sur</div>
+                    <div style="flex: 1;"><span style="background: #e8f5e9; color: #2e7d32; padding: 2px 8px; border-radius: 10px; font-size: 11px;">Activo</span></div>
+                    <div style="flex: 1;">✏️ 🗑️</div>
+                </div>
+                <div class="mockup-table-row">
+                    <div style="flex: 1; font-weight: bold;">LOTE-003</div>
+                    <div style="flex: 2;">Zona Experimental</div>
+                    <div style="flex: 1;">1.0 ha</div>
+                    <div style="flex: 1;">Sector Este</div>
+                    <div style="flex: 1;"><span style="background: #ffebee; color: #c62828; padding: 2px 8px; border-radius: 10px; font-size: 11px;">Inactivo</span></div>
+                    <div style="flex: 1;">✏️ 🗑️</div>
+                </div>
+            </div>
+
+            <h3>Campos de Lote</h3>
+            <table>
+                <tr>
+                    <th>Campo</th>
+                    <th>Descripción</th>
+                    <th>Ejemplo</th>
+                </tr>
+                <tr>
+                    <td>Código</td>
+                    <td>Identificador único del lote</td>
+                    <td>LOTE-001</td>
+                </tr>
+                <tr>
+                    <td>Nombre</td>
+                    <td>Nombre descriptivo</td>
+                    <td>Bloque Norte A</td>
+                </tr>
+                <tr>
+                    <td>Hectáreas</td>
+                    <td>Superficie en hectáreas</td>
+                    <td>5.5</td>
+                </tr>
+                <tr>
+                    <td>Ubicación</td>
+                    <td>Sector o referencia de ubicación</td>
+                    <td>Sector Norte</td>
+                </tr>
+                <tr>
+                    <td>Notas</td>
+                    <td>Observaciones adicionales</td>
+                    <td>Terreno fértil</td>
+                </tr>
+                <tr>
+                    <td>Estado</td>
+                    <td>Activo o Inactivo</td>
+                    <td>Activo</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <h1 id="tareas">8. Gestión de Labores/Tareas</h1>
+
+    <div class="screen">
+        <div class="screen-header">Pantalla: Labores</div>
+        <div class="screen-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <div style="font-size: 22px; font-weight: bold; color: #333;">Gestión de Labores</div>
+                <div style="background: #1a5f2a; color: white; padding: 8px 15px; border-radius: 6px; font-size: 13px;">+ Nueva Asignación</div>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                <div style="background: #1a5f2a; color: white; padding: 10px 20px; border-radius: 8px; font-weight: bold;">Asignaciones Pendientes</div>
+                <div style="background: #e0e0e0; color: #333; padding: 10px 20px; border-radius: 8px;">Configuración de Labores</div>
+            </div>
+            
+            <div class="mockup-table">
+                <div style="display: flex; background: #f5f5f5; padding: 12px; border-radius: 6px 6px 0 0; font-weight: bold; font-size: 13px;">
+                    <div style="flex: 2;">Tarea</div>
+                    <div style="flex: 1;">Obrero</div>
+                    <div style="flex: 1;">Lote</div>
+                    <div style="flex: 1;">Fecha</div>
+                    <div style="flex: 1;">Estado</div>
+                    <div style="flex: 1;">Acciones</div>
+                </div>
+                <div class="mockup-table-row">
+                    <div style="flex: 2; font-weight: bold;">Fumigación Plagas</div>
+                    <div style="flex: 1;">Carlos Ruiz</div>
+                    <div style="flex: 1;">Bloque Norte A</div>
+                    <div style="flex: 1;">20/03/2024</div>
+                    <div style="flex: 1;"><span style="background: #fff3e0; color: #f57c00; padding: 2px 8px; border-radius: 10px; font-size: 11px;">⚠ Pendiente</span></div>
+                    <div style="flex: 1;"><button style="background: #388e3c; color: white; border: none; padding: 5px 12px; border-radius: 4px; font-size: 12px;">Completar</button></div>
+                </div>
+                <div class="mockup-table-row">
+                    <div style="flex: 2; font-weight: bold;">Riego por Goteo</div>
+                    <div style="flex: 1;">Pedro Gómez</div>
+                    <div style="flex: 1;">Bloque Sur B</div>
+                    <div style="flex: 1;">19/03/2024</div>
+                    <div style="flex: 1;"><span style="background: #e3f2fd; color: #1976d2; padding: 2px 8px; border-radius: 10px; font-size: 11px;">⏰ En Progreso</span></div>
+                    <div style="flex: 1;"><button style="background: #388e3c; color: white; border: none; padding: 5px 12px; border-radius: 4px; font-size: 12px;">Completar</button></div>
+                </div>
+                <div class="mockup-table-row">
+                    <div style="flex: 2; font-weight: bold;">Abonado Quincenal</div>
+                    <div style="flex: 1;">Ana Martínez</div>
+                    <div style="flex: 1;">Lote-003</div>
+                    <div style="flex: 1;">18/03/2024</div>
+                    <div style="flex: 1;"><span style="background: #e8f5e9; color: #2e7d32; padding: 2px 8px; border-radius: 10px; font-size: 11px;">✓ Completada</span></div>
+                    <div style="flex: 1;">-</div>
+                </div>
+            </div>
+
+            <h3>Estados de Tarea</h3>
+            <table>
+                <tr>
+                    <th>Estado</th>
+                    <th>Color</th>
+                    <th>Significado</th>
+                </tr>
+                <tr>
+                    <td>⚠ Pendiente</td>
+                    <td>Naranja</td>
+                    <td>Tarea asignada pero no iniciada</td>
+                </tr>
+                <tr>
+                    <td>⏰ En Progreso</td>
+                    <td>Azul</td>
+                    <td>Tarea actualmente en ejecución</td>
+                </tr>
+                <tr>
+                    <td>✓ Completada</td>
+                    <td>Verde</td>
+                    <td>Tarea finalizada exitosamente</td>
+                </tr>
+                <tr>
+                    <td>✕ Cancelada</td>
+                    <td>Rojo</td>
+                    <td>Tarea cancelada o no aplicable</td>
+                </tr>
+            </table>
+
+            <h3>Flujo para Crear Asignación</h3>
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <strong>Haga clic en "Nueva Asignación"</strong><br>
+                    Se abre un formulario modal.
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <strong>Seleccione el tipo de labor</strong><br>
+                    Ej: Fumigación, Riego, Abonado, Control de Malezas
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <strong>Asigne un obrero</strong><br>
+                    Seleccione el trabajador responsable de la tarea.
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <strong>Seleccione el lote</strong><br>
+                    Elija la parcela donde se realizará la labor.
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">5</div>
+                <div class="step-content">
+                    <strong>Defina la fecha programada</strong><br>
+                    Establezca cuándo debe realizarse la tarea.
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">6</div>
+                <div class="step-content">
+                    <strong>Guarde la asignación</strong><br>
+                    La tarea aparecerá en la lista de pendientes.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h1 id="cosecha">9. Módulo de Cosecha</h1>
+
+    <div class="screen">
+        <div class="screen-header">Pantalla: Cosecha</div>
+        <div class="screen-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <div style="font-size: 22px; font-weight: bold; color: #333;">Cosecha</div>
+                <div style="background: #1a5f2a; color: white; padding: 8px 15px; border-radius: 6px; font-size: 13px;">+ Nuevo Registro</div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px;">
+                <div class="mockup-stat" style="border: 2px solid #1a5f2a;">
+                    <div style="font-size: 12px; color: #666;">Total Cortados</div>
+                    <div style="font-size: 28px; font-weight: bold; color: #1a5f2a;">847</div>
+                </div>
+                <div class="mockup-stat">
+                    <div style="font-size: 12px; color: #666;">Total Embolsados</div>
+                    <div style="font-size: 28px; font-weight: bold; color: #1976d2;">923</div>
+                </div>
+                <div class="mockup-stat">
+                    <div style="font-size: 12px; color: #666;">Perdidos</div>
+                    <div style="font-size: 28px; font-weight: bold; color: #d32f2f;">12</div>
+                </div>
+                <div class="mockup-stat">
+                    <div style="font-size: 12px; color: #666;">Ratio Pérdida</div>
+                    <div style="font-size: 28px; font-weight: bold; color: #f57c00;">1.4%</div>
+                </div>
+            </div>
+
+            <div class="mockup-card" style="margin-bottom: 20px;">
+                <div style="font-weight: bold; margin-bottom: 15px;">Calendario de Cosecha - Semana Actual</div>
+                <div style="display: flex; gap: 10px; overflow-x: auto;">
+                    <div style="border: 2px solid #ff0000; border-radius: 8px; padding: 12px; min-width: 100px; text-align: center;">
+                        <div style="font-size: 11px; color: #666;">Semana 1</div>
+                        <div style="width: 30px; height: 30px; background: #ff0000; border-radius: 50%; margin: 8px auto;"></div>
+                        <div style="font-size: 11px;">01-07 Ene</div>
+                    </div>
+                    <div style="border: 2px solid #00ff00; border-radius: 8px; padding: 12px; min-width: 100px; text-align: center;">
+                        <div style="font-size: 11px; color: #666;">Semana 2</div>
+                        <div style="width: 30px; height: 30px; background: #00ff00; border-radius: 50%; margin: 8px auto;"></div>
+                        <div style="font-size: 11px;">08-14 Ene</div>
+                    </div>
+                    <div style="border: 2px solid #0000ff; border-radius: 8px; padding: 12px; min-width: 100px; text-align: center;">
+                        <div style="font-size: 11px; color: #666;">Semana 3</div>
+                        <div style="width: 30px; height: 30px; background: #0000ff; border-radius: 50%; margin: 8px auto;"></div>
+                        <div style="font-size: 11px;">15-21 Ene</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mockup-table">
+                <div style="display: flex; background: #f5f5f5; padding: 12px; border-radius: 6px 6px 0 0; font-weight: bold; font-size: 13px;">
+                    <div style="flex: 1;">Fecha</div>
+                    <div style="flex: 1;">Lote</div>
+                    <div style="flex: 1;">Obrero</div>
+                    <div style="flex: 1;">Embolsados</div>
+                    <div style="flex: 1;">Cortados</div>
+                    <div style="flex: 1;">Perdidos</div>
+                    <div style="flex: 1;">Color</div>
+                </div>
+                <div class="mockup-table-row">
+                    <div style="flex: 1;">15/03/2024</div>
+                    <div style="flex: 1; font-weight: bold;">Bloque Norte A</div>
+                    <div style="flex: 1;">Carlos Ruiz</div>
+                    <div style="flex: 1; color: #1976d2;">50</div>
+                    <div style="flex: 1; color: #1a5f2a;">45</div>
+                    <div style="flex: 1; color: #d32f2f;">2</div>
+                    <div style="flex: 1;"><div style="width: 20px; height: 20px; background: #ff0000; border-radius: 50%;"></div></div>
+                </div>
+                <div class="mockup-table-row">
+                    <div style="flex: 1;">14/03/2024</div>
+                    <div style="flex: 1; font-weight: bold;">Bloque Sur B</div>
+                    <div style="flex: 1;">Pedro Gómez</div>
+                    <div style="flex: 1; color: #1976d2;">48</div>
+                    <div style="flex: 1; color: #1a5f2a;">44</div>
+                    <div style="flex: 1; color: #d32f2f;">1</div>
+                    <div style="flex: 1;"><div style="width: 20px; height: 20px; background: #00ff00; border-radius: 50%;"></div></div>
+                </div>
+            </div>
+
+            <h3>Datos para Registrar Cosecha</h3>
+            <table>
+                <tr>
+                    <th>Campo</th>
+                    <th>Descripción</th>
+                </tr>
+                <tr>
+                    <td>Lote</td>
+                    <td>Parcela de donde proviene la cosecha</td>
+                </tr>
+                <tr>
+                    <td>Obrero</td>
+                    <td>Trabajador que realizó la cosecha</td>
+                </tr>
+                <tr>
+                    <td>Fecha</td>
+                    <td>Día del registro</td>
+                </tr>
+                <tr>
+                    <td>Color de Cinta</td>
+                    <td>Código de color según el calendario semanal</td>
+                </tr>
+                <tr>
+                    <td>Racimos Embolsados</td>
+                    <td>Cantidad de racimos protegidos con bolsa</td>
+                </tr>
+                <tr>
+                    <td>Racimos Cortados</td>
+                    <td>Cantidad de racimos cosechados</td>
+                </tr>
+                <tr>
+                    <td>Racimos Perdidos</td>
+                    <td>Cantidad de racimos dañados o perdidos</td>
+                </tr>
+                <tr>
+                    <td>Peso Total (kg)</td>
+                    <td>Peso total de la cosecha</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <h1 id="inventario">10. Módulo de Inventario</h1>
+
+    <div class="screen">
+        <div class="screen-header">Pantalla: Inventario</div>
+        <div class="screen-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <div style="font-size: 22px; font-weight: bold; color: #333;">Inventario</div>
+                <div style="display: flex; gap: 10px;">
+                    <div style="background: #1976d2; color: white; padding: 8px 15px; border-radius: 6px; font-size: 13px;">↓ Registrar Movimiento</div>
+                    <div style="background: #1a5f2a; color: white; padding: 8px 15px; border-radius: 6px; font-size: 13px;">+ Nuevo Producto</div>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                <div style="background: #1a5f2a; color: white; padding: 10px 20px; border-radius: 8px; font-weight: bold;">Stock Actual</div>
+                <div style="background: #e0e0e0; color: #333; padding: 10px 20px; border-radius: 8px;">Movimientos</div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
+                <div class="mockup-card" style="border-left: 4px solid #1a5f2a;">
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div>
+                            <div style="font-weight: bold;">Fungicida Manzate</div>
+                            <div style="font-size: 12px; color: #666;">FUNG-001</div>
+                        </div>
+                        <div style="background: #e0e0e0; padding: 3px 8px; border-radius: 4px; font-size: 11px;">Litros</div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-top: 15px;">
+                        <div>
+                            <div style="font-size: 11px; color: #666;">Stock Actual</div>
+                            <div style="font-size: 24px; font-weight: bold; color: #1a5f2a;">75.5</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 11px; color: #666;">Mínimo</div>
+                            <div style="font-size: 18px; font-weight: bold;">50</div>
+                        </div>
+                    </div>
+                    <div style="width: 100%; height: 6px; background: #e0e0e0; border-radius: 3px; margin-top: 10px;">
+                        <div style="width: 75%; height: 100%; background: #1a5f2a; border-radius: 3px;"></div>
+                    </div>
+                </div>
+
+                <div class="mockup-card" style="border-left: 4px solid #d32f2f;">
+                    <div style="display: flex; align-items: center; gap: 5px; color: #d32f2f; margin-bottom: 5px;">
+                        <span style="font-size: 12px;">⚠ Stock Bajo</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div>
+                            <div style="font-weight: bold;">Herbicida Glifosato</div>
+                            <div style="font-size: 12px; color: #666;">HERB-001</div>
+                        </div>
+                        <div style="background: #e0e0e0; padding: 3px 8px; border-radius: 4px; font-size: 11px;">Litros</div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-top: 15px;">
+                        <div>
+                            <div style="font-size: 11px; color: #666;">Stock Actual</div>
+                            <div style="font-size: 24px; font-weight: bold; color: #d32f2f;">15</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 11px; color: #666;">Mínimo</div>
+                            <div style="font-size: 18px; font-weight: bold;">25</div>
+                        </div>
+                    </div>
+                    <div style="width: 100%; height: 6px; background: #e0e0e0; border-radius: 3px; margin-top: 10px;">
+                        <div style="width: 30%; height: 100%; background: #d32f2f; border-radius: 3px;"></div>
+                    </div>
+                </div>
+
+                <div class="mockup-card" style="border-left: 4px solid #1a5f2a;">
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div>
+                            <div style="font-weight: bold;">Abono NPK 15-15-15</div>
+                            <div style="font-size: 12px; color: #666;">ABON-001</div>
+                        </div>
+                        <div style="background: #e0e0e0; padding: 3px 8px; border-radius: 4px; font-size: 11px;">Kg</div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-top: 15px;">
+                        <div>
+                            <div style="font-size: 11px; color: #666;">Stock Actual</div>
+                            <div style="font-size: 24px; font-weight: bold; color: #1a5f2a;">250</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 11px; color: #666;">Mínimo</div>
+                            <div style="font-size: 18px; font-weight: bold;">100</div>
+                        </div>
+                    </div>
+                    <div style="width: 100%; height: 6px; background: #e0e0e0; border-radius: 3px; margin-top: 10px;">
+                        <div style="width: 100%; height: 100%; background: #1a5f2a; border-radius: 3px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Tipos de Movimiento</h3>
+            <table>
+                <tr>
+                    <th>Tipo</th>
+                    <th>Color</th>
+                    <th>Descripción</th>
+                    <th>Efecto en Stock</th>
+                </tr>
+                <tr>
+                    <td>Entrada</td>
+                    <td><span style="background: #e8f5e9; color: #2e7d32; padding: 2px 8px; border-radius: 4px;">+ Verde</span></td>
+                    <td>Compra, reabastecimiento, devolución</td>
+                    <td>Aumenta el stock</td>
+                </tr>
+                <tr>
+                    <td>Salida</td>
+                    <td><span style="background: #ffebee; color: #c62828; padding: 2px 8px; border-radius: 4px;">- Rojo</span></td>
+                    <td>Uso en labores, aplicación, merma</td>
+                    <td>Disminuye el stock</td>
+                </tr>
+            </table>
+
+            <h3>Campos para Registrar Producto</h3>
+            <ul>
+                <li><strong>Código:</strong> Identificador único del insumo</li>
+                <li><strong>Nombre:</strong> Nombre comercial del producto</li>
+                <li><strong>Descripción:</strong> Detalles adicionales (opcional)</li>
+                <li><strong>Unidad:</strong> kg, Litros, Unidades, etc.</li>
+                <li><strong>Stock Mínimo:</strong> Nivel mínimo para alertas</li>
+            </ul>
+        </div>
+    </div>
+
+    <h1 id="roles">11. Permisos por Rol</h1>
+
+    <p>El sistema BananaGestion implementa control de acceso basado en roles (RBAC). Cada usuario tiene permisos específicos según su rol:</p>
+
+    <table>
+        <tr>
+            <th>Módulo</th>
+            <th>Administrador</th>
+            <th>Supervisor</th>
+            <th>Obrero</th>
+        </tr>
+        <tr>
+            <td><strong>Dashboard</strong></td>
+            <td style="text-align: center;">✓</td>
+            <td style="text-align: center;">✓</td>
+            <td style="text-align: center;">✓</td>
+        </tr>
+        <tr>
+            <td><strong>Usuarios - Ver</strong></td>
+            <td style="text-align: center;">✓</td>
+            <td style="text-align: center;">✓</td>
+            <td style="text-align: center;">✗</td>
+        </tr>
+        <tr>
+            <td><strong>Usuarios - Crear/Editar</strong></td>
+            <td style="text-align: center;">✓</td>
+            <td style="text-align: center;">✓</td>
+            <td style="text-align: center;">✗</td>
+        </tr>
+        <tr>
+            <td><strong>Usuarios - Eliminar</strong></td>
+            <td style="text-align: center;">✓</td>
+            <td style="text-align: center;">✗</td>
+            <td style="text-align: center;">✗</td>
+        </tr>
+        <tr>
+            <td><strong>Lotes - CRUD</strong></td>
+            <td style="text-align: center;">✓</td>
+            <td style="text-align: center;">✓</td>
+            <td style="text-align: center;">Ver</td>
+        </tr>
+        <tr>
+            <td><strong>Labores - Ver</strong></td>
+            <td style="text-align: center;">✓</td>
+            <td style="text-align: center;">✓</td>
+            <td style="text-align: center;">✓</td>
+        </tr>
+        <tr>
+            <td><strong>Labores - Crear/Editar</strong></td>
+            <td style="text-align: center;">✓</td>
+            <td style="text-align: center;">✓</td>
+            <td style="text-align: center;">Solo Completar</td>
+        </tr>
+        <tr>
+            <td><strong>Cosecha - Ver</strong></td>
+            <td style="text-align: center;">✓</td>
+            <td style="text-align: center;">✓</td>
+            <td style="text-align: center;">✓</td>
+        </tr>
+        <tr>
+            <td><strong>Cosecha - Registrar</strong></td>
+            <td style="text-align: center;">✓</td>
+            <td style="text-align: center;">✓</td>
+            <td style="text-align: center;">✗</td>
+        </tr>
+        <tr>
+            <td><strong>Inventario - Ver</strong></td>
+            <td style="text-align: center;">✓</td>
+            <td style="text-align: center;">✓</td>
+            <td style="text-align: center;">✓</td>
+        </tr>
+        <tr>
+            <td><strong>Inventario - Gestionar</strong></td>
+            <td style="text-align: center;">✓</td>
+            <td style="text-align: center;">✓</td>
+            <td style="text-align: center;">✗</td>
+        </tr>
+        <tr>
+            <td><strong>Reportes</strong></td>
+            <td style="text-align: center;">✓</td>
+            <td style="text-align: center;">✓</td>
+            <td style="text-align: center;">✗</td>
+        </tr>
+        <tr>
+            <td><strong>Configuración</strong></td>
+            <td style="text-align: center;">✓</td>
+            <td style="text-align: center;">✗</td>
+            <td style="text-align: center;">✗</td>
+        </tr>
+    </table>
+
+    <div class="info-box">
+        <strong>Recomendación:</strong> Asigne el rol mínimo necesario a cada usuario. Use "Administrador" solo para quienes gestionan el sistema, "Supervisor" para encargados de campo, y "Obrero" para trabajadores que solo ejecutan tareas.
+    </div>
+
+    <div class="footer">
+        <p><strong>BananaGestion</strong> - Sistema de Gestión para Fincas Bananeras</p>
+        <p>Versión 1.0 | Manual de Usuario</p>
+        <p>Para soporte técnico, contacte al administrador del sistema</p>
+    </div>
+</body>
+</html>
