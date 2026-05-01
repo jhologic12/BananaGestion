@@ -16,6 +16,8 @@ bin/
 obj/
 */bin/
 */obj/
+publish/
+*/publish/
 
 # IDE
 .vscode/
