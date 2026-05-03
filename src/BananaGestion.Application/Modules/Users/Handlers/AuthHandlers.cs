@@ -4,7 +4,7 @@ using BananaGestion.Application.Modules.Users.DTOs;
 using BananaGestion.Domain.Entities;
 using BananaGestion.Domain.Enums;
 using MediatR;
-
+using Microsoft.Extensions.Logging;
 
 namespace BananaGestion.Application.Modules.Users.Handlers;
 
@@ -12,32 +12,56 @@ public class LoginHandler : IRequestHandler<LoginCommand, AuthResponse>
 {
     private readonly IUserRepository _userRepository;
     private readonly IJwtTokenService _jwtService;
+    private readonly ILogger<LoginHandler> _logger;
 
-    public LoginHandler(IUserRepository userRepository, IJwtTokenService jwtService)
+    public LoginHandler(IUserRepository userRepository, IJwtTokenService jwtService, ILogger<LoginHandler> logger)
     {
         _userRepository = userRepository;
         _jwtService = jwtService;
+        _logger = logger;
     }
 
     public async Task<AuthResponse> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userRepository.GetByEmailAsync(request.Request.Email);
-        if (user == null || !BCrypt.Net.BCrypt.Verify(request.Request.Password, user.PasswordHash))
+        try
         {
-            throw new UnauthorizedAccessException("Credenciales inválidas");
-        }
+            _logger.LogInformation("Login attempt for email: {Email}", request.Request.Email);
+            
+            var user = await _userRepository.GetByEmailAsync(request.Request.Email);
+            if (user == null)
+            {
+                _logger.LogWarning("Login failed: User not found for email: {Email}", request.Request.Email);
+                throw new UnauthorizedAccessException("Credenciales inválidas");
+            }
 
-        if (!user.Activo)
+            _logger.LogInformation("User found: {Email}, Activo: {Activo}, Rol: {Rol}", user.Email, user.Activo, user.Rol);
+
+            if (!BCrypt.Net.BCrypt.Verify(request.Request.Password, user.PasswordHash))
+            {
+                _logger.LogWarning("Login failed: Invalid password for email: {Email}", request.Request.Email);
+                throw new UnauthorizedAccessException("Credenciales inválidas");
+            }
+
+            if (!user.Activo)
+            {
+                _logger.LogWarning("Login failed: User inactive for email: {Email}", request.Request.Email);
+                throw new UnauthorizedAccessException("Usuario inactivo");
+            }
+
+            user.UltimoLogin = DateTime.UtcNow;
+            await _userRepository.UpdateAsync(user);
+
+            _logger.LogInformation("Generating JWT token for user: {Email}", user.Email);
+            var token = _jwtService.GenerateToken(user.Id, user.Email, user.Rol.ToString());
+            _logger.LogInformation("Login successful for email: {Email}", request.Request.Email);
+
+            return new AuthResponse(user.Id, user.Email, user.Nombre, user.Apellido, user.Rol.ToString(), token);
+        }
+        catch (Exception ex)
         {
-            throw new UnauthorizedAccessException("Usuario inactivo");
+            _logger.LogError(ex, "Login error for email {Email}: {Message}", request.Request.Email, ex.Message);
+            throw;
         }
-
-        user.UltimoLogin = DateTime.UtcNow;
-        await _userRepository.UpdateAsync(user);
-
-        var token = _jwtService.GenerateToken(user.Id, user.Email, user.Rol.ToString());
-
-        return new AuthResponse(user.Id, user.Email, user.Nombre, user.Apellido, user.Rol.ToString(), token);
     }
 }
 
