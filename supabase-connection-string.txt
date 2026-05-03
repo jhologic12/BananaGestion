@@ -1,0 +1,1 @@
+Host=aws-1-us-east-2.pooler.supabase.com;Port=6543;Database=postgres;Username=postgres.lgthcewizmurigzmmkeb;Password=J@0f90121554860;SSL Mode=Require;Pooling=true;Timeout=60;Command Timeout=60;
