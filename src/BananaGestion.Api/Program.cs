@@ -44,7 +44,7 @@ builder.Services.AddDbContext<BananaDbContext>(options =>
     options.UseNpgsql(
         builder.Configuration.GetConnectionString("DefaultConnection") ??
             throw new InvalidOperationException("Connection string not configured"),
-        npgsqlOptions => npgsqlOptions.CommandTimeout(60)
+        npgsqlOptions => npgsqlOptions.CommandTimeout(120)
     );
 });
 

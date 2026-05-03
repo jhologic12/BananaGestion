@@ -152,6 +152,22 @@ public class RegisterHandler : IRequestHandler<RegisterCommand, AuthResponse>
                 
                 throw new InvalidOperationException("Error al registrar usuario: timeout de conexión");
             }
+            catch (DbUpdateException ex) when (ex.InnerException is NpgsqlException)
+            {
+                // Npgsql client timeout (e.g., reading from stream timeout) - check if user was actually created
+                _logger.LogWarning("Npgsql exception during registration: {Message}", ex.InnerException?.Message);
+                
+                await Task.Delay(2000);
+                var createdUser = await _userRepository.GetByEmailAsync(request.Request.Email);
+                if (createdUser != null)
+                {
+                    _logger.LogInformation("User was actually created despite Npgsql exception: {Email}", user.Email);
+                    var token3 = _jwtService.GenerateToken(createdUser.Id, createdUser.Email, createdUser.Rol.ToString());
+                    return new AuthResponse(createdUser.Id, createdUser.Email, createdUser.Nombre, createdUser.Apellido, createdUser.Rol.ToString(), token3);
+                }
+                
+                throw new InvalidOperationException("Error al registrar usuario: timeout de conexión con la base de datos");
+            }
 
             var token = _jwtService.GenerateToken(user.Id, user.Email, user.Rol.ToString());
 
