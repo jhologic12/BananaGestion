@@ -4,7 +4,9 @@ using BananaGestion.Application.Modules.Users.DTOs;
 using BananaGestion.Domain.Entities;
 using BananaGestion.Domain.Enums;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Npgsql;
 
 namespace BananaGestion.Application.Modules.Users.Handlers;
 
@@ -79,36 +81,60 @@ public class RegisterHandler : IRequestHandler<RegisterCommand, AuthResponse>
 {
     private readonly IUserRepository _userRepository;
     private readonly IJwtTokenService _jwtService;
+    private readonly ILogger<RegisterHandler> _logger;
 
-    public RegisterHandler(IUserRepository userRepository, IJwtTokenService jwtService)
+    public RegisterHandler(IUserRepository userRepository, IJwtTokenService jwtService, ILogger<RegisterHandler> logger)
     {
         _userRepository = userRepository;
         _jwtService = jwtService;
+        _logger = logger;
     }
 
     public async Task<AuthResponse> Handle(RegisterCommand request, CancellationToken cancellationToken)
     {
-        var existing = await _userRepository.GetByEmailAsync(request.Request.Email);
-        if (existing != null)
+        try
         {
-            throw new InvalidOperationException("El email ya está registrado");
+            var existing = await _userRepository.GetByEmailAsync(request.Request.Email);
+            if (existing != null)
+            {
+                _logger.LogWarning("Registration failed: Email already registered: {Email}", request.Request.Email);
+                throw new InvalidOperationException("El email ya está registrado");
+            }
+
+            // Generate a fresh GUID to avoid duplicates
+            var user = new User
+            {
+                Id = Guid.NewGuid(),  // Explicitly set new GUID
+                Email = request.Request.Email,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Request.Password, 12),
+                Nombre = request.Request.Nombre,
+                Apellido = request.Request.Apellido,
+                Telefono = request.Request.Telefono,
+                Rol = UserRole.Obrero
+            };
+
+            _logger.LogInformation("Attempting to register user: {Email} with ID: {UserId}", user.Email, user.Id);
+
+            try
+            {
+                await _userRepository.AddAsync(user);
+                _logger.LogInformation("User registered successfully: {Email}", user.Email);
+            }
+            catch (DbUpdateException ex) when (ex.InnerException is PostgresException pgEx && pgEx.SqlState == "23505")
+            {
+                _logger.LogError("Duplicate key error during registration: {Message}", pgEx.Message);
+                throw new InvalidOperationException("Error al registrar usuario: posible duplicado de ID");
+            }
+
+            var token = _jwtService.GenerateToken(user.Id, user.Email, user.Rol.ToString());
+
+            return new AuthResponse(user.Id, user.Email, user.Nombre, user.Apellido, user.Rol.ToString(), token);
         }
-
-        var user = new User
+        catch (Exception ex)
         {
-            Email = request.Request.Email,
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Request.Password, 12),
-            Nombre = request.Request.Nombre,
-            Apellido = request.Request.Apellido,
-            Telefono = request.Request.Telefono,
-            Rol = UserRole.Obrero
-        };
-
-        await _userRepository.AddAsync(user);
-
-        var token = _jwtService.GenerateToken(user.Id, user.Email, user.Rol.ToString());
-
-        return new AuthResponse(user.Id, user.Email, user.Nombre, user.Apellido, user.Rol.ToString(), token);
+            _logger.LogError(ex, "Registration error for email {Email}: {Message}", request.Request.Email, ex.Message);
+            throw;
+        }
     }
 }
 
