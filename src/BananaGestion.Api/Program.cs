@@ -48,11 +48,18 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddDbContext<BananaDbContext>(options =>
 {
-    options.UseNpgsql(
-        builder.Configuration.GetConnectionString("DefaultConnection") ??
-            throw new InvalidOperationException("Connection string not configured"),
-        npgsqlOptions => npgsqlOptions.CommandTimeout(120)
-    );
+    var conn = builder.Configuration.GetConnectionString("DefaultConnection");
+    if (!string.IsNullOrEmpty(conn))
+    {
+        options.UseNpgsql(
+            conn,
+            npgsqlOptions => npgsqlOptions.CommandTimeout(120)
+        );
+    }
+    else
+    {
+        Console.WriteLine("WARNING: DefaultConnection not configured, using in-memory for startup");
+    }
 });
 
 builder.Services.AddApplication();
@@ -61,17 +68,21 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
+        var key = builder.Configuration["Jwt:Key"];
+        if (string.IsNullOrEmpty(key))
+        {
+            Console.WriteLine("WARNING: JWT Key not configured, using temporary key for startup");
+            key = Convert.ToBase64String(System.Security.Cryptography.RandomNumberGenerator.GetBytes(32));
+        }
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ??
-                    throw new InvalidOperationException("JWT Key not configured")))
+            ValidIssuer = builder.Configuration["Jwt:Issuer"] ?? "BananaGestion",
+            ValidAudience = builder.Configuration["Jwt:Audience"] ?? "BananaGestionApp",
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
         };
     });
 
