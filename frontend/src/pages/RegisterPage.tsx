@@ -54,7 +54,14 @@ export function RegisterPage() {
       toast.success('Cuenta creada exitosamente');
       navigate('/dashboard');
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Error al registrarse');
+      // Handle validation errors array
+      if (error.response?.data?.errors) {
+        const errors = error.response.data.errors;
+        const firstError = Array.isArray(errors) ? errors[0] : errors;
+        toast.error(firstError?.message || 'Error de validación');
+      } else {
+        toast.error(error.response?.data?.message || 'Error al registrarse');
+      }
     } finally {
       setLoading(false);
     }

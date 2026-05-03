@@ -36,9 +36,15 @@ export function LoginPage() {
       login(user, response.data.token);
       toast.success('Bienvenido');
       navigate('/dashboard');
-    } catch (error: any) {
+  } catch (error: any) {
+    if (error.response?.data?.errors) {
+      const errors = error.response.data.errors;
+      const firstError = Array.isArray(errors) ? errors[0] : errors;
+      toast.error(firstError?.message || 'Error de validación');
+    } else {
       toast.error(error.response?.data?.message || 'Error al iniciar sesión');
-    } finally {
+    }
+  } finally {
       setLoading(false);
     }
   };

@@ -136,6 +136,16 @@ app.UseExceptionHandler(errorApp =>
 
         logger.LogError(exception, "Unhandled exception during request: {Message}", exception?.Message);
 
+        // Handle FluentValidation errors
+        if (exception is FluentValidation.ValidationException validationEx)
+        {
+            context.Response.StatusCode = StatusCodes.Status400BadRequest;
+            context.Response.ContentType = "application/json";
+            var errors = validationEx.Errors.Select(e => new { field = e.PropertyName, message = e.ErrorMessage });
+            await context.Response.WriteAsync(System.Text.Json.JsonSerializer.Serialize(new { errors }));
+            return;
+        }
+
         context.Response.StatusCode = StatusCodes.Status500InternalServerError;
         context.Response.ContentType = "application/json";
         await context.Response.WriteAsync("{\"error\":\"Error interno del servidor\"}");
