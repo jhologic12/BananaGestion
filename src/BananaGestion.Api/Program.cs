@@ -142,7 +142,7 @@ using (var scope = app.Services.CreateScope())
         var canConnect = await db.Database.CanConnectAsync();
         if (canConnect)
         {
-            await db.Database.EnsureCreatedAsync();
+            await db.Database.MigrateAsync();
             var tables = new List<string>();
             using (var cmd = db.Database.GetDbConnection().CreateCommand())
             {
