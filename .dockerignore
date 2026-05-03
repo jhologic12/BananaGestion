@@ -11,3 +11,4 @@
 **/*.md
 **/*.yml
 **/*.yaml
+!start.sh
