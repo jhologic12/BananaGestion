@@ -17,8 +17,8 @@ RUN dotnet publish -c Release -o /app/publish
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
 COPY --from=build /app/publish .
-COPY start.sh /app/start.sh
-RUN chmod +x /app/start.sh
+
+RUN printf '#!/bin/sh\nPORT=${PORT:-8080}\necho "Starting on port $PORT"\nexec dotnet BananaGestion.Api.dll --urls="http://+:$PORT"\n' > /app/start.sh && chmod +x /app/start.sh
 
 EXPOSE 8080
 
