@@ -152,30 +152,19 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-using (var scope = app.Services.CreateScope())
+// Initialize database in background (non-blocking for Render port detection)
+_ = Task.Run(async () =>
 {
-    var db = scope.ServiceProvider.GetRequiredService<BananaDbContext>();
+    await Task.Delay(2000); // Give Kestrel time to start
     try
     {
+        using var scope = app.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<BananaDbContext>();
         var canConnect = await db.Database.CanConnectAsync();
         if (canConnect)
         {
             await db.Database.MigrateAsync();
-            var tables = new List<string>();
-            using (var cmd = db.Database.GetDbConnection().CreateCommand())
-            {
-                cmd.CommandText = "SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname = 'public'";
-                await db.Database.OpenConnectionAsync();
-                using (var reader = await cmd.ExecuteReaderAsync())
-                {
-                    while (await reader.ReadAsync())
-                    {
-                        tables.Add(reader.GetString(0));
-                    }
-                }
-            }
-            Console.WriteLine($"Database connected. Tables found: {tables.Count}");
-            foreach (var t in tables) Console.WriteLine($"  - {t}");
+            Console.WriteLine("Database initialized successfully");
         }
         else
         {
@@ -184,10 +173,9 @@ using (var scope = app.Services.CreateScope())
     }
     catch (Exception ex)
     {
-        Console.WriteLine($"ERROR creating database: {ex.Message}");
-        Console.WriteLine($"Inner exception: {ex.InnerException?.Message}");
+        Console.WriteLine($"ERROR initializing database: {ex.Message}");
     }
-}
+});
 
 app.Run();
 
