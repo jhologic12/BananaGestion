@@ -101,10 +101,9 @@ public class RegisterHandler : IRequestHandler<RegisterCommand, AuthResponse>
                 throw new InvalidOperationException("El email ya está registrado");
             }
 
-            // Generate a fresh GUID to avoid duplicates
+            // Let EF Core generate the ID naturally
             var user = new User
             {
-                Id = Guid.NewGuid(),  // Explicitly set new GUID
                 Email = request.Request.Email,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Request.Password, 12),
                 Nombre = request.Request.Nombre,
@@ -122,8 +121,36 @@ public class RegisterHandler : IRequestHandler<RegisterCommand, AuthResponse>
             }
             catch (DbUpdateException ex) when (ex.InnerException is PostgresException pgEx && pgEx.SqlState == "23505")
             {
-                _logger.LogError("Duplicate key error during registration: {Message}", pgEx.Message);
+                // Duplicate key - check if user was actually created
+                _logger.LogWarning("Duplicate key error during registration: {Message}", pgEx.Message);
+                
+                // Wait a bit and check if user was created despite the error
+                await Task.Delay(1000);
+                var createdUser = await _userRepository.GetByEmailAsync(request.Request.Email);
+                if (createdUser != null)
+                {
+                    _logger.LogInformation("User was actually created despite duplicate key error: {Email}", user.Email);
+                    var token1 = _jwtService.GenerateToken(createdUser.Id, createdUser.Email, createdUser.Rol.ToString());
+                    return new AuthResponse(createdUser.Id, createdUser.Email, createdUser.Nombre, createdUser.Apellido, createdUser.Rol.ToString(), token1);
+                }
+                
                 throw new InvalidOperationException("Error al registrar usuario: posible duplicado de ID");
+            }
+            catch (DbUpdateException ex) when (ex.InnerException is PostgresException pgEx && pgEx.SqlState == "08006")
+            {
+                // Connection timeout - check if user was actually created
+                _logger.LogWarning("Connection timeout during registration, checking if user was created...");
+                
+                await Task.Delay(1000);
+                var createdUser = await _userRepository.GetByEmailAsync(request.Request.Email);
+                if (createdUser != null)
+                {
+                    _logger.LogInformation("User was actually created despite timeout: {Email}", user.Email);
+                    var token2 = _jwtService.GenerateToken(createdUser.Id, createdUser.Email, createdUser.Rol.ToString());
+                    return new AuthResponse(createdUser.Id, createdUser.Email, createdUser.Nombre, createdUser.Apellido, createdUser.Rol.ToString(), token2);
+                }
+                
+                throw new InvalidOperationException("Error al registrar usuario: timeout de conexión");
             }
 
             var token = _jwtService.GenerateToken(user.Id, user.Email, user.Rol.ToString());

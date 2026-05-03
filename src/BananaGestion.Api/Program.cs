@@ -2,12 +2,10 @@ using System.Text;
 using BananaGestion.Application;
 using BananaGestion.Infrastructure;
 using BananaGestion.Infrastructure.Data;
-using BananaGestion.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,23 +14,23 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "BananaGestion API", Version = "v1" });
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "BananaGestion API", Version = "v1" });
+    c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
     {
         Description = "JWT Authorization header using the Bearer scheme",
         Name = "Authorization",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey,
+        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey,
         Scheme = "Bearer"
     });
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
     {
         {
-            new OpenApiSecurityScheme
+            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
             {
-                Reference = new OpenApiReference
+                Reference = new Microsoft.OpenApi.Models.OpenApiReference
                 {
-                    Type = ReferenceType.SecurityScheme,
+                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
                     Id = "Bearer"
                 }
             },
@@ -41,29 +39,13 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-builder.Services.AddRateLimiter(options =>
+builder.Services.AddDbContext<BananaDbContext>(options =>
 {
-    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
-    options.AddFixedWindowLimiter("login", loginOptions =>
-    {
-        loginOptions.PermitLimit = 5;
-        loginOptions.Window = TimeSpan.FromMinutes(1);
-        loginOptions.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
-        loginOptions.QueueLimit = 0;
-    });
-});
-
-builder.Services.AddDbContext<BananaDbContext>((serviceProvider, options) =>
-{
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection") ??
-        throw new InvalidOperationException("Connection string not configured"),
-        npgsqlOptions =>
-        {
-            npgsqlOptions.EnableRetryOnFailure(
-                maxRetryCount: 3,
-                maxRetryDelay: TimeSpan.FromSeconds(30),
-                errorCodesToAdd: null);
-        });
+    options.UseNpgsql(
+        builder.Configuration.GetConnectionString("DefaultConnection") ??
+            throw new InvalidOperationException("Connection string not configured"),
+        npgsqlOptions => npgsqlOptions.CommandTimeout(60)
+    );
 });
 
 builder.Services.AddApplication();
@@ -107,16 +89,21 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.AddFixedWindowLimiter("login", loginOptions =>
+    {
+        loginOptions.PermitLimit = 5;
+        loginOptions.Window = TimeSpan.FromMinutes(1);
+        loginOptions.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+        loginOptions.QueueLimit = 0;
+    });
+});
+
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.UseHttpsRedirection();
-
+// Security headers
 app.Use(async (context, next) =>
 {
     context.Response.Headers.Append("X-Frame-Options", "DENY");
