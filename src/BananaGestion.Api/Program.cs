@@ -137,7 +137,38 @@ app.MapControllers();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<BananaDbContext>();
-    await db.Database.EnsureCreatedAsync();
+    try
+    {
+        var canConnect = await db.Database.CanConnectAsync();
+        if (canConnect)
+        {
+            await db.Database.EnsureCreatedAsync();
+            var tables = new List<string>();
+            using (var cmd = db.Database.GetDbConnection().CreateCommand())
+            {
+                cmd.CommandText = "SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname = 'public'";
+                await db.Database.OpenConnectionAsync();
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        tables.Add(reader.GetString(0));
+                    }
+                }
+            }
+            Console.WriteLine($"Database connected. Tables found: {tables.Count}");
+            foreach (var t in tables) Console.WriteLine($"  - {t}");
+        }
+        else
+        {
+            Console.WriteLine("WARNING: Cannot connect to database!");
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"ERROR creating database: {ex.Message}");
+        Console.WriteLine($"Inner exception: {ex.InnerException?.Message}");
+    }
 }
 
 app.Run();
