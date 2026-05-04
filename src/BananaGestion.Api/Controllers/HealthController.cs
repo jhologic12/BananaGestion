@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,6 +19,22 @@ public class HealthController : ControllerBase
     public IActionResult Get()
     {
         return Ok(new { status = "healthy", timestamp = DateTime.UtcNow });
+    }
+
+    [HttpGet("env-check")]
+    [AllowAnonymous]
+    public IActionResult EnvCheck()
+    {
+        var conn = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
+        var jwt = Environment.GetEnvironmentVariable("Jwt__Key");
+        return Ok(new
+        {
+            hasConnectionString = !string.IsNullOrEmpty(conn),
+            hasJwtKey = !string.IsNullOrEmpty(jwt),
+            port = Environment.GetEnvironmentVariable("PORT"),
+            aspnetcoreEnvironment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"),
+            timestamp = DateTime.UtcNow
+        });
     }
 
     [HttpGet("db-check")]
