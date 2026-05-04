@@ -51,34 +51,6 @@ public class HarvestHandlers :
         var calendars = await _repository.GetCalendarAsync(request.Year);
         Console.WriteLine($"GetHarvestCalendarQuery: Found {calendars.Count()} records for year {request.Year}");
         
-        if (!calendars.Any())
-        {
-            Console.WriteLine($"No calendar records found for {request.Year}, seeding...");
-            calendars = new List<HarvestCalendar>();
-            
-            for (int week = 1; week <= 52; week++)
-            {
-                var weekStart = GetDateForWeek(request.Year, week, DayOfWeek.Monday);
-                var weekEnd = weekStart.AddDays(6);
-                var (hexColor, _, colorName) = WeekColors[week];
-                
-                var calendar = new HarvestCalendar
-                {
-                    Id = Guid.NewGuid(),
-                    Semana = week,
-                    Ano = request.Year,
-                    ColorCinta = hexColor,
-                    ColorNombre = colorName,
-                    FechaInicio = weekStart,
-                    FechaFin = weekEnd,
-                    Activo = true
-                };
-                
-                await _repository.CreateCalendarAsync(calendar);
-                ((List<HarvestCalendar>)calendars).Add(calendar);
-            }
-        }
-        
         return calendars.Select(MapCalendarToDto);
     }
 
