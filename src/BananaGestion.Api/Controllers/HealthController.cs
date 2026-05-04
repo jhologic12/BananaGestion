@@ -73,6 +73,12 @@ public class HealthController : ControllerBase
         }
     }
 
+    [HttpGet("test")]
+    public IActionResult Test()
+    {
+        return Ok(new { message = "API is working", timestamp = DateTime.UtcNow });
+    }
+
     [HttpGet("calendar-check")]
     public async Task<IActionResult> CalendarCheck([FromQuery] int year = 2026)
     {
