@@ -20,6 +20,7 @@ public class CosechaController : ControllerBase
     }
 
     [HttpGet("calendar/{year}")]
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<HarvestCalendarDto>>> GetCalendar(int year)
     {
         var calendar = await _mediator.Send(new GetHarvestCalendarQuery(year));
