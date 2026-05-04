@@ -49,9 +49,11 @@ public class HarvestHandlers :
     public async Task<IEnumerable<HarvestCalendarDto>> Handle(GetHarvestCalendarQuery request, CancellationToken cancellationToken)
     {
         var calendars = await _repository.GetCalendarAsync(request.Year);
+        Console.WriteLine($"GetHarvestCalendarQuery: Found {calendars.Count()} records for year {request.Year}");
         
         if (!calendars.Any())
         {
+            Console.WriteLine($"No calendar records found for {request.Year}, seeding...");
             calendars = new List<HarvestCalendar>();
             
             for (int week = 1; week <= 52; week++)
