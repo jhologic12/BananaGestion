@@ -18,27 +18,7 @@ public class HealthController : ControllerBase
     [HttpGet]
     public IActionResult Get()
     {
-        return Ok(new { 
-            status = "healthy", 
-            version = "v2.0",
-            timestamp = DateTime.UtcNow 
-        });
-    }
-
-    [HttpGet("env-check")]
-    [AllowAnonymous]
-    public IActionResult EnvCheck()
-    {
-        var conn = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
-        var jwt = Environment.GetEnvironmentVariable("Jwt__Key");
-        return Ok(new
-        {
-            hasConnectionString = !string.IsNullOrEmpty(conn),
-            hasJwtKey = !string.IsNullOrEmpty(jwt),
-            port = Environment.GetEnvironmentVariable("PORT"),
-            aspnetcoreEnvironment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"),
-            timestamp = DateTime.UtcNow
-        });
+        return Ok(new { status = "healthy", version = "v2.0", timestamp = DateTime.UtcNow });
     }
 
     [HttpGet("db-check")]
@@ -67,6 +47,7 @@ public class HealthController : ControllerBase
     }
 
     [HttpGet("calendar-check")]
+    [AllowAnonymous]
     public async Task<IActionResult> CalendarCheck([FromQuery] int year = 2026)
     {
         try
@@ -75,7 +56,12 @@ public class HealthController : ControllerBase
                 .Where(c => c.Ano == year)
                 .CountAsync();
 
-            return Ok(new { year, totalRecords = count, timestamp = DateTime.UtcNow });
+            var allYears = await _db.Set<BananaGestion.Domain.Entities.HarvestCalendar>()
+                .Select(c => c.Ano)
+                .Distinct()
+                .ToListAsync();
+
+            return Ok(new { year, totalRecords = count, allYearsInDb = allYears, timestamp = DateTime.UtcNow });
         }
         catch (Exception ex)
         {
