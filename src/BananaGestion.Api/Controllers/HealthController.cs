@@ -18,7 +18,11 @@ public class HealthController : ControllerBase
     [HttpGet]
     public IActionResult Get()
     {
-        return Ok(new { status = "healthy", timestamp = DateTime.UtcNow });
+        return Ok(new { 
+            status = "healthy", 
+            version = "v2.0",
+            timestamp = DateTime.UtcNow 
+        });
     }
 
     [HttpGet("env-check")]
