@@ -75,7 +75,7 @@ export function CosechaPage() {
   const [cosechas, setCosechas] = useState<Cosecha[]>([]);
   const [proyecciones, setProyecciones] = useState<Proyeccion[]>([]);
   const [lotes, setLotes] = useState<Lote[]>([]);
-  const [currentYear, setCurrentYear] = useState(2027);
+  const [currentYear, setCurrentYear] = useState(2026);
   const [loading, setLoading] = useState(true);
   
   const [encinteModalOpen, setEncinteModalOpen] = useState(false);
