@@ -9,7 +9,6 @@ namespace BananaGestion.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
 public class CosechaController : ControllerBase
 {
     private readonly IMediator _mediator;
