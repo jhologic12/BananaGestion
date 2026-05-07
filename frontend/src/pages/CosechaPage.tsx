@@ -24,7 +24,7 @@ interface Encinte {
   loteId: string;
   loteNombre: string;
   userId: string;
-  userName: string;
+  userNombre: string;
   semanaEncinte: number;
   anoEncinte: number;
   cantidadRacimosEmbolsados: number;
@@ -269,7 +269,7 @@ export function CosechaPage() {
                 Edad: {diffWeeks} semana(s) desde embolsado
               </div>
               <div className="mt-1 text-xs text-gray-500">
-                Registrado por: {encinte.userName || 'Usuario'}
+                Registrado por: {encinte.userNombre || 'Usuario'}
               </div>
             </Card>
           );
