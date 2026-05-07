@@ -23,6 +23,8 @@ interface Encinte {
   id: string;
   loteId: string;
   loteNombre: string;
+  userId: string;
+  userName: string;
   semanaEncinte: number;
   anoEncinte: number;
   cantidadRacimosEmbolsados: number;
@@ -121,10 +123,6 @@ export function CosechaPage() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const getEncinteForWeek = (semana: number) => {
-    return encintes.filter(e => e.semanaEncinte === semana);
   };
 
   const getCosechasForEncinteWeek = (semana: number) => {
@@ -253,27 +251,25 @@ export function CosechaPage() {
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {calendar.filter(c => c.activo).map((week) => {
-          const encinteSemana = getEncinteForWeek(week.semana);
-          const totalEncintados = encinteSemana.reduce((sum, e) => sum + e.cantidadRacimosEmbolsados, 0);
+        {encintes.map((encinte) => {
+          const fechaEncinte = new Date(encinte.fecha);
+          const hoy = new Date();
+          const diffTime = Math.abs(hoy.getTime() - fechaEncinte.getTime());
+          const diffWeeks = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 7));
           
           return (
-            <Card key={week.id} className="p-4">
-              <div className="flex items-center gap-2 mb-3">
-                <div className={`w-4 h-4 rounded ${getWeekColor(week.colorCinta)}`} />
-                <span className="font-semibold">S{week.semana}</span>
-                <span className="text-sm text-gray-500">{week.colorNombre}</span>
+            <Card key={encinte.id} className="p-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-gray-700">{encinte.loteNombre}</span>
+                <span className="text-xs text-gray-500">{new Date(encinte.fecha).toLocaleDateString('es-ES')}</span>
               </div>
-              <div className="space-y-1 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Encintados:</span>
-                  <span className="font-medium text-white">{totalEncintados}</span>
-                </div>
+              <div className="text-2xl font-bold text-white">{encinte.cantidadRacimosEmbolsados}</div>
+              <div className="text-xs text-gray-500 mt-1">Racimos embolsados</div>
+              <div className="mt-2 text-xs font-semibold text-blue-600">
+                Edad: {diffWeeks} semana(s) desde embolsado
               </div>
-              <div className="mt-3 pt-3 border-t border-gray-100">
-                <p className="text-xs text-gray-500">
-                  {new Date(week.fechaInicio).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })}
-                </p>
+              <div className="mt-1 text-xs text-gray-500">
+                Registrado por: {encinte.userName || 'Usuario'}
               </div>
             </Card>
           );
