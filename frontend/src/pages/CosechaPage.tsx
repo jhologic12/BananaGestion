@@ -255,7 +255,8 @@ export function CosechaPage() {
           const fechaEncinte = new Date(encinte.fecha);
           const hoy = new Date();
           const diffTime = Math.abs(hoy.getTime() - fechaEncinte.getTime());
-          const diffWeeks = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 7));
+          const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+          const diffWeeks = Math.floor(diffDays / 7);
           
           return (
             <Card key={encinte.id} className="p-4">
@@ -266,7 +267,7 @@ export function CosechaPage() {
               <div className="text-2xl font-bold text-white">{encinte.cantidadRacimosEmbolsados}</div>
               <div className="text-xs text-gray-500 mt-1">Racimos embolsados</div>
               <div className="mt-2 text-xs font-semibold text-blue-600">
-                Edad: {diffWeeks} semana(s) desde embolsado
+                Edad: {diffWeeks > 0 ? `${diffWeeks} semana(s)` : `${diffDays} día(s)`} desde embolsado
               </div>
               <div className="mt-1 text-xs text-gray-500">
                 Registrado por: {encinte.userNombre || 'Usuario'}
