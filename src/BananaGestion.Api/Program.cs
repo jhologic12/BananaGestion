@@ -50,20 +50,14 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddDbContext<BananaDbContext>(options =>
 {
-    // Read from environment variable with simple name to avoid parsing issues
+    // Read from environment variable
     var conn = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
     
     if (string.IsNullOrEmpty(conn))
-    {
-        Console.WriteLine("[DEBUG] DB_CONNECTION_STRING not found, trying ConnectionStrings__DefaultConnection");
         conn = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
-    }
     
     if (string.IsNullOrEmpty(conn))
-    {
-        Console.WriteLine("[DEBUG] Trying appsettings config");
         conn = builder.Configuration.GetConnectionString("DefaultConnection");
-    }
     
     Console.WriteLine($"[DEBUG] Connection string source: {(string.IsNullOrEmpty(conn) ? "NULL" : "Found (" + conn.Length + " chars)")}");
     
@@ -71,11 +65,32 @@ builder.Services.AddDbContext<BananaDbContext>(options =>
     {
         try
         {
-            // Use NpgsqlConnectionStringBuilder to properly parse and normalize the connection string
-            var builder = new Npgsql.NpgsqlConnectionStringBuilder(conn);
-            var normalizedConn = builder.ToString();
+            string normalizedConn;
             
-            Console.WriteLine($"[DEBUG] Normalized connection, host: {builder.Host}:{builder.Port}");
+            if (conn.StartsWith("postgresql://") || conn.StartsWith("postgres://"))
+            {
+                // Parse URI format: postgresql://user:pass@host:port/db
+                var uri = new Uri(conn);
+                var userInfo = uri.UserInfo.Split(':');
+                var builder = new Npgsql.NpgsqlConnectionStringBuilder
+                {
+                    Host = uri.Host,
+                    Port = uri.Port > 0 ? uri.Port : 5432,
+                    Database = uri.AbsolutePath.TrimStart('/'),
+                    Username = userInfo.Length > 0 ? userInfo[0] : "",
+                    Password = userInfo.Length > 1 ? userInfo[1] : "",
+                    SslMode = Npgsql.SslMode.Require
+                };
+                normalizedConn = builder.ToString();
+                Console.WriteLine($"[DEBUG] Parsed URI: {builder.Host}:{builder.Port}/{builder.Database}");
+            }
+            else
+            {
+                // Parse key=value format
+                var npgsqlBuilder = new Npgsql.NpgsqlConnectionStringBuilder(conn);
+                normalizedConn = npgsqlBuilder.ToString();
+                Console.WriteLine($"[DEBUG] Parsed key=value: {npgsqlBuilder.Host}:{npgsqlBuilder.Port}");
+            }
             
             options.UseNpgsql(normalizedConn, npgsqlOptions => {
                 npgsqlOptions.CommandTimeout(30);
