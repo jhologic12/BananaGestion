@@ -3,6 +3,8 @@ using BananaGestion.Application;
 using BananaGestion.Infrastructure;
 using BananaGestion.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -136,12 +138,26 @@ app.UseExceptionHandler(errorApp =>
 {
     errorApp.Run(async context =>
     {
-        var exception = context.Features.Get<Microsoft.AspNetCore.Diagnostics.IExceptionHandlerFeature>()?.Error;
+        var exception = context.Features.Get<IExceptionHandlerFeature>()?.Error;
         var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
 
-        logger.LogError(exception, "Unhandled exception during request: {Message}", exception?.Message);
+        logger.LogError(exception, "Unhandled exception: {ExceptionType}: {Message}\nStack: {StackTrace}", 
+            exception?.GetType().Name, exception?.Message, exception?.StackTrace);
 
-        // Handle FluentValidation errors
+        var showDetails = context.Request.Query.ContainsKey("debug");
+        
+        if (showDetails || context.RequestServices.GetService<IWebHostEnvironment>()?.IsDevelopment() == true)
+        {
+            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+            context.Response.ContentType = "application/json";
+            await context.Response.WriteAsync(System.Text.Json.JsonSerializer.Serialize(new { 
+                error = "Error interno del servidor",
+                details = exception?.Message,
+                stack = exception?.StackTrace
+            }));
+            return;
+        }
+
         if (exception is FluentValidation.ValidationException validationEx)
         {
             context.Response.StatusCode = StatusCodes.Status400BadRequest;
