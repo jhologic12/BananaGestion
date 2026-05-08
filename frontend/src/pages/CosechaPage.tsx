@@ -257,10 +257,15 @@ export function CosechaPage() {
           const currentWeek = Math.ceil((today.getTime() - startOfYear.getTime()) / (1000 * 60 * 60 * 24 * 7)) + 1;
           const diffWeeks = Math.max(0, currentWeek - encinte.semanaEncinte);
           
-          return (
+           return (
             <Card key={encinte.id} className="p-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium text-gray-700">{encinte.loteNombre}</span>
+                <div 
+                  className="w-4 h-4 rounded" 
+                  style={{ backgroundColor: encinte.colorCinta === '#FFFFFF' ? '#f3f4f6' : encinte.colorCinta }}
+                  title={encinte.colorCinta}
+                />
                 <span className="text-xs text-gray-500">
                   {new Date(encinte.fecha).toLocaleDateString('es-ES')}
                 </span>
