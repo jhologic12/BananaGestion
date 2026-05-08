@@ -55,7 +55,10 @@ builder.Services.AddDbContext<BananaDbContext>(options =>
     {
         options.UseNpgsql(
             conn,
-            npgsqlOptions => npgsqlOptions.CommandTimeout(10)
+            npgsqlOptions => {
+                npgsqlOptions.CommandTimeout(30);
+                npgsqlOptions.EnableRetryOnFailure(3, TimeSpan.FromSeconds(10), null);
+            }
         );
     }
     else
