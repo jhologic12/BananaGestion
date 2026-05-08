@@ -50,44 +50,48 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddDbContext<BananaDbContext>(options =>
 {
-    // Read directly from environment variable to avoid configuration mapping issues
-    var conn = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
+    // Read from environment variable with simple name to avoid parsing issues
+    var conn = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
     
     if (string.IsNullOrEmpty(conn))
     {
-        // Fallback to config file
+        Console.WriteLine("[DEBUG] DB_CONNECTION_STRING not found, trying ConnectionStrings__DefaultConnection");
+        conn = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
+    }
+    
+    if (string.IsNullOrEmpty(conn))
+    {
+        Console.WriteLine("[DEBUG] Trying appsettings config");
         conn = builder.Configuration.GetConnectionString("DefaultConnection");
     }
     
-    Console.WriteLine($"[DEBUG] Connection string source: {(string.IsNullOrEmpty(conn) ? "NULL or EMPTY" : "Environment variable")}");
+    Console.WriteLine($"[DEBUG] Connection string source: {(string.IsNullOrEmpty(conn) ? "NULL" : "Found (" + conn.Length + " chars)")}");
     
     if (!string.IsNullOrEmpty(conn))
     {
         try
         {
-            Console.WriteLine($"[DEBUG] Connection string length: {conn.Length}");
-            var hostPart = conn.Contains("Host=") ? conn.Split(new[] { "Host=" }, StringSplitOptions.None)[1].Split(';')[0] : "not found";
-            Console.WriteLine($"[DEBUG] Connection string host: {hostPart}");
+            // Use NpgsqlConnectionStringBuilder to properly parse and normalize the connection string
+            var builder = new Npgsql.NpgsqlConnectionStringBuilder(conn);
+            var normalizedConn = builder.ToString();
             
-            options.UseNpgsql(
-                conn,
-                npgsqlOptions => {
-                    npgsqlOptions.CommandTimeout(30);
-                    npgsqlOptions.EnableRetryOnFailure(3, TimeSpan.FromSeconds(10), null);
-                }
-            );
+            Console.WriteLine($"[DEBUG] Normalized connection, host: {builder.Host}:{builder.Port}");
+            
+            options.UseNpgsql(normalizedConn, npgsqlOptions => {
+                npgsqlOptions.CommandTimeout(30);
+                npgsqlOptions.EnableRetryOnFailure(3, TimeSpan.FromSeconds(10), null);
+            });
             Console.WriteLine("[DEBUG] Npgsql configured successfully");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[ERROR] Failed to configure Npgsql: {ex.Message}");
-            Console.WriteLine($"[ERROR] Stack: {ex.StackTrace}");
+            Console.WriteLine($"[ERROR] Npgsql configuration failed: {ex.Message}");
             throw;
         }
     }
     else
     {
-        Console.WriteLine("WARNING: DefaultConnection not configured, using in-memory for startup");
+        Console.WriteLine("WARNING: No connection string found!");
     }
 });
 
