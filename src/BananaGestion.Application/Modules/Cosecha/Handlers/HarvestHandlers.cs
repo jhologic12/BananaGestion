@@ -272,7 +272,8 @@ public class HarvestHandlers :
 
     private static EncinteDto MapEncinteToDto(HarvestRecord r) => new(
         r.Id, r.LoteId, r.Lote.Nombre, r.UserId, $"{r.User.Nombre} {r.User.Apellido}",
-        r.SemanaEncinte, r.AnoEncinte, r.CantidadRacimosEmbolsados, r.ColorCinta, r.Fecha, r.Notas
+        r.SemanaEncinte, r.AnoEncinte, r.CantidadRacimosEmbolsados, r.ColorCinta,
+        WeekColors.GetValueOrDefault(r.SemanaEncinte).Nombre, r.Fecha, r.Notas
     );
 
     private static HarvestCosechaDto MapCosechaToDto(HarvestCosecha c) => new(

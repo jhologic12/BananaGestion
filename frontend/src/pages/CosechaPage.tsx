@@ -29,6 +29,7 @@ interface Encinte {
   anoEncinte: number;
   cantidadRacimosEmbolsados: number;
   colorCinta: string;
+  colorNombre?: string;
   fecha: string;
   notas?: string;
 }
@@ -259,22 +260,19 @@ export function CosechaPage() {
           
            return (
             <Card key={encinte.id} className="p-4">
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium text-gray-700">{encinte.loteNombre}</span>
-                  <span className="bg-blue-100 text-blue-800 text-xs font-bold px-2 py-0.5 rounded-full">
-                    S{encinte.semanaEncinte}
-                  </span>
-                </div>
+              <div className="flex items-center gap-2 mb-2">
                 <div 
                   className="w-4 h-4 rounded" 
                   style={{ backgroundColor: encinte.colorCinta === '#FFFFFF' ? '#f3f4f6' : encinte.colorCinta }}
                   title={encinte.colorCinta}
                 />
-                <span className="text-xs text-gray-500">
+                <span className="font-semibold text-sm">S{encinte.semanaEncinte}</span>
+                <span className="text-sm text-gray-600">{encinte.colorNombre}</span>
+                <span className="text-xs text-gray-500 ml-auto">
                   {new Date(encinte.fecha).toLocaleDateString('es-ES')}
                 </span>
               </div>
+              <div className="text-sm font-medium text-gray-700 mb-2">{encinte.loteNombre}</div>
               <div className="text-2xl font-bold text-white">{encinte.cantidadRacimosEmbolsados}</div>
               <div className="text-xs text-gray-500 mt-1">Racimos embolsados</div>
               <div className="mt-2 text-xs font-bold text-blue-600">

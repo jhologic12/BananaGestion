@@ -21,6 +21,7 @@ public record EncinteDto(
     int AnoEncinte,
     int CantidadRacimosEmbolsados,
     string ColorCinta,
+    string? ColorNombre,
     DateTime Fecha,
     string? Notas
 );
