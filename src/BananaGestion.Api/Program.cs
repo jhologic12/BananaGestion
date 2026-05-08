@@ -93,7 +93,7 @@ builder.Services.AddDbContext<BananaDbContext>(options =>
             }
             
             options.UseNpgsql(normalizedConn, npgsqlOptions => {
-                npgsqlOptions.CommandTimeout(30);
+                npgsqlOptions.CommandTimeout(60);
                 npgsqlOptions.EnableRetryOnFailure(3, TimeSpan.FromSeconds(10), null);
             });
             Console.WriteLine("[DEBUG] Npgsql configured successfully");
