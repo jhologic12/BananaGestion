@@ -99,6 +99,8 @@ public class HarvestHandlers :
             throw new InvalidOperationException("No se pudo identificar el usuario que registra el encinte");
         }
 
+        var calendar = await _repository.GetCalendarByWeekAsync(request.Request.SemanaEncinte, request.Request.AnoEncinte);
+        
         var record = new HarvestRecord
         {
             LoteId = request.Request.LoteId,
@@ -107,7 +109,7 @@ public class HarvestHandlers :
             AnoEncinte = request.Request.AnoEncinte,
             CantidadRacimosEmbolsados = request.Request.CantidadRacimosEmbolsados,
             ColorCinta = request.Request.ColorCinta,
-            Fecha = request.Request.Fecha,
+            Fecha = calendar?.FechaInicio ?? request.Request.Fecha,
             Notas = request.Request.Notas
         };
 
