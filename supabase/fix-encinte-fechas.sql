@@ -2,12 +2,13 @@
 -- This ensures the "edad del racimo" calculation is accurate
 
 UPDATE harvest_records hr
-SET fecha = hc."FechaInicio"
+SET fecha = hc."fecha_inicio"
 FROM harvest_calendars hc
-WHERE hr."SemanaEncinte" = hc."Semana"
-  AND hr."AnoEncinte" = hc."Ano";
+WHERE hr.semana_encinte = hc.semana
+  AND hr.ano_encinte = hc.ano;
 
 -- Verify the update
--- SELECT id, "LoteId", "SemanaEncinte", "AnoEncinte", fecha 
+-- SELECT id, semana_encinte, ano_encinte, fecha 
 -- FROM harvest_records 
--- ORDER BY "SemanaEncinte";
+-- ORDER BY semana_encinte;
+
