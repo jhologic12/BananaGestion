@@ -122,7 +122,7 @@ builder.Services.AddDbContext<BananaDbContext>(options =>
             }
             
             options.UseNpgsql(normalizedConn, npgsqlOptions => {
-                npgsqlOptions.CommandTimeout(60);
+                npgsqlOptions.CommandTimeout(120);
                 npgsqlOptions.EnableRetryOnFailure(3, TimeSpan.FromSeconds(10), null);
             });
             Console.WriteLine("[DEBUG] Npgsql configured successfully");
@@ -254,28 +254,37 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-// Initialize database in background (non-blocking for Render port detection)
+// Initialize database in background with warm-up retries (non-blocking for Render port detection)
 _ = Task.Run(async () =>
 {
-    await Task.Delay(2000); // Give Kestrel time to start
-    try
+    await Task.Delay(5000);
+    for (int i = 0; i < 5; i++)
     {
-        using var scope = app.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<BananaDbContext>();
-        var canConnect = await db.Database.CanConnectAsync();
-        if (canConnect)
+        try
         {
+            using var scope = app.Services.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<BananaDbContext>();
+            
+            // Warm up Npgsql connection pool by opening a raw connection
+            var conn = db.Database.GetDbConnection();
+            await conn.OpenAsync();
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = "SELECT 1";
+            cmd.CommandTimeout = 120;
+            await cmd.ExecuteScalarAsync();
+            await conn.CloseAsync();
+            Console.WriteLine("Database connection pool warmed up successfully");
+            
+            // Run migrations
             await db.Database.MigrateAsync();
             Console.WriteLine("Database initialized successfully");
+            break;
         }
-        else
+        catch (Exception ex)
         {
-            Console.WriteLine("WARNING: Cannot connect to database!");
+            Console.WriteLine($"Database init attempt {i + 1}/5 failed: {ex.Message}");
+            if (i < 4) await Task.Delay(TimeSpan.FromSeconds(15 * (i + 1)));
         }
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"ERROR initializing database: {ex.Message}");
     }
 });
 
