@@ -66,30 +66,59 @@ builder.Services.AddDbContext<BananaDbContext>(options =>
         try
         {
             string normalizedConn;
+            string host;
+            int port;
             
             if (conn.StartsWith("postgresql://") || conn.StartsWith("postgres://"))
             {
-                // Parse URI format: postgresql://user:pass@host:port/db
                 var uri = new Uri(conn);
                 var userInfo = uri.UserInfo.Split(':');
+                host = uri.Host;
+                port = uri.Port > 0 ? uri.Port : 5432;
+                
                 var builder = new Npgsql.NpgsqlConnectionStringBuilder
                 {
-                    Host = uri.Host,
-                    Port = uri.Port > 0 ? uri.Port : 5432,
+                    Host = host,
+                    Port = port,
                     Database = uri.AbsolutePath.TrimStart('/'),
                     Username = userInfo.Length > 0 ? userInfo[0] : "",
                     Password = userInfo.Length > 1 ? userInfo[1] : "",
                     SslMode = Npgsql.SslMode.Require
                 };
                 normalizedConn = builder.ToString();
-                Console.WriteLine($"[DEBUG] Parsed URI: {builder.Host}:{builder.Port}/{builder.Database}");
+                Console.WriteLine($"[DEBUG] Parsed URI: {host}:{port}/{builder.Database}");
             }
             else
             {
-                // Parse key=value format
                 var npgsqlBuilder = new Npgsql.NpgsqlConnectionStringBuilder(conn);
+                host = npgsqlBuilder.Host;
+                port = npgsqlBuilder.Port;
                 normalizedConn = npgsqlBuilder.ToString();
-                Console.WriteLine($"[DEBUG] Parsed key=value: {npgsqlBuilder.Host}:{npgsqlBuilder.Port}");
+                Console.WriteLine($"[DEBUG] Parsed key=value: {host}:{port}");
+            }
+            
+            // Try to resolve hostname to IPv4 (Render cannot reach Supabase via IPv6)
+            try
+            {
+                var addresses = System.Net.Dns.GetHostAddresses(host);
+                var ipv4 = addresses.FirstOrDefault(a => a.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
+                if (ipv4 != null)
+                {
+                    var ipv4Builder = new Npgsql.NpgsqlConnectionStringBuilder(normalizedConn)
+                    {
+                        Host = ipv4.ToString()
+                    };
+                    normalizedConn = ipv4Builder.ToString();
+                    Console.WriteLine($"[DEBUG] Resolved {host} -> {ipv4} (IPv4)");
+                }
+                else
+                {
+                    Console.WriteLine($"[WARN] No IPv4 address found for {host}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[WARN] DNS resolution failed: {ex.Message}");
             }
             
             options.UseNpgsql(normalizedConn, npgsqlOptions => {
