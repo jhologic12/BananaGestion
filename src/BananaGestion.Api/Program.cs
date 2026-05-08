@@ -51,15 +51,26 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddDbContext<BananaDbContext>(options =>
 {
     var conn = builder.Configuration.GetConnectionString("DefaultConnection");
+    Console.WriteLine($"[DEBUG] Connection string from config: {(string.IsNullOrEmpty(conn) ? "NULL or EMPTY" : conn.Substring(0, Math.Min(50, conn.Length)) + "...")}");
+    
     if (!string.IsNullOrEmpty(conn))
     {
-        options.UseNpgsql(
-            conn,
-            npgsqlOptions => {
-                npgsqlOptions.CommandTimeout(30);
-                npgsqlOptions.EnableRetryOnFailure(3, TimeSpan.FromSeconds(10), null);
-            }
-        );
+        try
+        {
+            options.UseNpgsql(
+                conn,
+                npgsqlOptions => {
+                    npgsqlOptions.CommandTimeout(30);
+                    npgsqlOptions.EnableRetryOnFailure(3, TimeSpan.FromSeconds(10), null);
+                }
+            );
+            Console.WriteLine("[DEBUG] Npgsql configured successfully");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[ERROR] Failed to configure Npgsql: {ex.Message}");
+            throw;
+        }
     }
     else
     {
