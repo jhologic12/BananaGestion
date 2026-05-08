@@ -50,13 +50,25 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddDbContext<BananaDbContext>(options =>
 {
-    var conn = builder.Configuration.GetConnectionString("DefaultConnection");
-    Console.WriteLine($"[DEBUG] Connection string from config: {(string.IsNullOrEmpty(conn) ? "NULL or EMPTY" : conn.Substring(0, Math.Min(50, conn.Length)) + "...")}");
+    // Read directly from environment variable to avoid configuration mapping issues
+    var conn = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
+    
+    if (string.IsNullOrEmpty(conn))
+    {
+        // Fallback to config file
+        conn = builder.Configuration.GetConnectionString("DefaultConnection");
+    }
+    
+    Console.WriteLine($"[DEBUG] Connection string source: {(string.IsNullOrEmpty(conn) ? "NULL or EMPTY" : "Environment variable")}");
     
     if (!string.IsNullOrEmpty(conn))
     {
         try
         {
+            Console.WriteLine($"[DEBUG] Connection string length: {conn.Length}");
+            var hostPart = conn.Contains("Host=") ? conn.Split(new[] { "Host=" }, StringSplitOptions.None)[1].Split(';')[0] : "not found";
+            Console.WriteLine($"[DEBUG] Connection string host: {hostPart}");
+            
             options.UseNpgsql(
                 conn,
                 npgsqlOptions => {
@@ -69,6 +81,7 @@ builder.Services.AddDbContext<BananaDbContext>(options =>
         catch (Exception ex)
         {
             Console.WriteLine($"[ERROR] Failed to configure Npgsql: {ex.Message}");
+            Console.WriteLine($"[ERROR] Stack: {ex.StackTrace}");
             throw;
         }
     }
