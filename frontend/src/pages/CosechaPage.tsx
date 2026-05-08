@@ -243,7 +243,7 @@ export function CosechaPage() {
   const renderEncinteTab = () => (
     <div>
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold text-gray-800">Registro de Encinte</h2>
+        <h2 className="text-lg font-bold text-gray-800">Registro de Encinte</h2>
         <Button onClick={() => setEncinteModalOpen(true)}>
           <Plus className="w-4 h-4 mr-2" />
           Nuevo Encinte
@@ -252,22 +252,23 @@ export function CosechaPage() {
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {encintes.map((encinte) => {
-          const fechaEncinte = new Date(encinte.fecha);
-          const hoy = new Date();
-          const diffTime = Math.abs(hoy.getTime() - fechaEncinte.getTime());
-          const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-          const diffWeeks = Math.floor(diffDays / 7);
+          const today = new Date();
+          const startOfYear = new Date(today.getFullYear(), 0, 1);
+          const currentWeek = Math.ceil((today.getTime() - startOfYear.getTime()) / (1000 * 60 * 60 * 24 * 7)) + 1;
+          const diffWeeks = Math.max(0, currentWeek - encinte.semanaEncinte);
           
           return (
             <Card key={encinte.id} className="p-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium text-gray-700">{encinte.loteNombre}</span>
-                <span className="text-xs text-gray-500">{new Date(encinte.fecha).toLocaleDateString('es-ES')}</span>
+                <span className="text-xs text-gray-500">
+                  {new Date(encinte.fecha).toLocaleDateString('es-ES')}
+                </span>
               </div>
               <div className="text-2xl font-bold text-white">{encinte.cantidadRacimosEmbolsados}</div>
               <div className="text-xs text-gray-500 mt-1">Racimos embolsados</div>
-              <div className="mt-2 text-xs font-semibold text-blue-600">
-                Edad: {diffWeeks > 0 ? `${diffWeeks} semana(s)` : `${diffDays} día(s)`} desde embolsado
+              <div className="mt-2 text-xs font-bold text-blue-600">
+                Edad: {diffWeeks} semana(s) desde embolsado (S{encinte.semanaEncinte})
               </div>
               <div className="mt-1 text-xs text-gray-500">
                 Registrado por: {encinte.userNombre || 'Usuario'}
