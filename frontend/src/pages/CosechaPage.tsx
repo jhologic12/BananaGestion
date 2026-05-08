@@ -260,7 +260,12 @@ export function CosechaPage() {
            return (
             <Card key={encinte.id} className="p-4">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-gray-700">{encinte.loteNombre}</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-gray-700">{encinte.loteNombre}</span>
+                  <span className="bg-blue-100 text-blue-800 text-xs font-bold px-2 py-0.5 rounded-full">
+                    S{encinte.semanaEncinte}
+                  </span>
+                </div>
                 <div 
                   className="w-4 h-4 rounded" 
                   style={{ backgroundColor: encinte.colorCinta === '#FFFFFF' ? '#f3f4f6' : encinte.colorCinta }}
