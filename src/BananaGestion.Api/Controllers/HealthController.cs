@@ -16,9 +16,8 @@ public class HealthController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get()
+    public IActionResult Get()
     {
-        await Task.CompletedTask;
         return Ok(new { status = "healthy", version = "v2.0", timestamp = DateTime.UtcNow });
     }
 
