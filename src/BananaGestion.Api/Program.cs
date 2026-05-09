@@ -97,30 +97,6 @@ builder.Services.AddDbContext<BananaDbContext>(options =>
                 Console.WriteLine($"[DEBUG] Parsed key=value: {host}:{port}");
             }
             
-            // Try to resolve hostname to IPv4 (Render cannot reach Supabase via IPv6)
-            try
-            {
-                var addresses = System.Net.Dns.GetHostAddresses(host);
-                var ipv4 = addresses.FirstOrDefault(a => a.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
-                if (ipv4 != null)
-                {
-                    var ipv4Builder = new Npgsql.NpgsqlConnectionStringBuilder(normalizedConn)
-                    {
-                        Host = ipv4.ToString()
-                    };
-                    normalizedConn = ipv4Builder.ToString();
-                    Console.WriteLine($"[DEBUG] Resolved {host} -> {ipv4} (IPv4)");
-                }
-                else
-                {
-                    Console.WriteLine($"[WARN] No IPv4 address found for {host}");
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"[WARN] DNS resolution failed: {ex.Message}");
-            }
-            
             // Increase connection timeout to 120s for slow Supabase pooler
             var connStringBuilder = new Npgsql.NpgsqlConnectionStringBuilder(normalizedConn)
             {
