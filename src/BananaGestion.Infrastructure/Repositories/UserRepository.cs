@@ -12,7 +12,30 @@ public class UserRepository : Repository<User>, IUserRepository
 
     public async Task<User?> GetByEmailAsync(string email)
     {
-        return await _dbSet.FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
+        // Use raw SQL to avoid EF Core LINQ timeout issues through Supabase pooler
+        var conn = _context.Database.GetDbConnection();
+        await conn.OpenAsync();
+        await using var cmd = conn.CreateCommand();
+        cmd.CommandText = "SELECT \"Id\", \"Email\", \"PasswordHash\", \"Nombre\", \"Apellido\", \"Telefono\", \"Rol\", \"Activo\", \"FechaCreacion\", \"UltimoLogin\" FROM \"users\" WHERE LOWER(\"Email\") = LOWER(@email) LIMIT 1";
+        cmd.Parameters.Add(new Npgsql.NpgsqlParameter("email", email));
+        await using var reader = await cmd.ExecuteReaderAsync();
+        if (await reader.ReadAsync())
+        {
+            return new User
+            {
+                Id = reader.GetGuid(0),
+                Email = reader.GetString(1),
+                PasswordHash = reader.GetString(2),
+                Nombre = reader.GetString(3),
+                Apellido = reader.GetString(4),
+                Telefono = reader.IsDBNull(5) ? null : reader.GetString(5),
+                Rol = (UserRole)reader.GetInt32(6),
+                Activo = reader.GetBoolean(7),
+                FechaCreacion = reader.GetDateTime(8),
+                UltimoLogin = reader.IsDBNull(9) ? null : reader.GetDateTime(9)
+            };
+        }
+        return null;
     }
 
     public async Task<User?> GetWithAssignmentsAsync(Guid id)

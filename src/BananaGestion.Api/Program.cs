@@ -97,14 +97,13 @@ builder.Services.AddDbContext<BananaDbContext>(options =>
                 Console.WriteLine($"[DEBUG] Parsed key=value: {host}:{port}");
             }
             
-            // Increase connection timeout from default 15s to 120s for slow Supabase pooler
+            // Increase connection timeout from 15s to 120s for slow Supabase pooler; no retry to avoid compounding delays
             var timeoutBuilder = new Npgsql.NpgsqlConnectionStringBuilder(normalizedConn)
             {
                 Timeout = 120
             };
             options.UseNpgsql(timeoutBuilder.ConnectionString, npgsqlOptions => {
                 npgsqlOptions.CommandTimeout(120);
-                npgsqlOptions.EnableRetryOnFailure(2, TimeSpan.FromSeconds(5), null);
             });
             Console.WriteLine("[DEBUG] Npgsql configured successfully");
         }
