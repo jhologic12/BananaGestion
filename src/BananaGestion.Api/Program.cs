@@ -121,7 +121,13 @@ builder.Services.AddDbContext<BananaDbContext>(options =>
                 Console.WriteLine($"[WARN] DNS resolution failed: {ex.Message}");
             }
             
-            options.UseNpgsql(normalizedConn, npgsqlOptions => {
+            // Increase connection timeout to 120s for slow Supabase pooler
+            var connStringBuilder = new Npgsql.NpgsqlConnectionStringBuilder(normalizedConn)
+            {
+                Timeout = 120
+            };
+            var finalConn = connStringBuilder.ToString();
+            options.UseNpgsql(finalConn, npgsqlOptions => {
                 npgsqlOptions.CommandTimeout(120);
                 npgsqlOptions.EnableRetryOnFailure(3, TimeSpan.FromSeconds(10), null);
             });
