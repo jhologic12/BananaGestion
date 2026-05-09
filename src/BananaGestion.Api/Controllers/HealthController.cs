@@ -55,13 +55,17 @@ public class HealthController : ControllerBase
         {
             var sw = System.Diagnostics.Stopwatch.StartNew();
             var user = await _db.Set<User>().FirstOrDefaultAsync(u => u.Email.ToLower() == "jhonospino@gmail.com".ToLower());
-            sw.Stop();
             if (user == null)
                 return Ok(new { step = "select", elapsedMs = sw.ElapsedMilliseconds, found = false });
             
             var verify = BCrypt.Net.BCrypt.Verify("J@0f90121554860", user.PasswordHash);
+            
+            user.UltimoLogin = DateTime.UtcNow;
+            await _db.SaveChangesAsync();
+            sw.Stop();
+            
             return Ok(new { 
-                step = "select+verify", 
+                step = "select+verify+update", 
                 elapsedMs = sw.ElapsedMilliseconds, 
                 found = true, 
                 email = user.Email, 
