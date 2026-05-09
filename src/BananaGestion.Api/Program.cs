@@ -76,6 +76,10 @@ builder.Services.AddDbContext<BananaDbContext>(options =>
                 host = uri.Host;
                 port = uri.Port > 0 ? uri.Port : 5432;
                 
+                // Supabase transaction pooler (port 6543) doesn't support Npgsql extended query protocol
+                // Use session pooler (port 5432) which supports prepared statements
+                if (port == 6543) port = 5432;
+                
                 var builder = new Npgsql.NpgsqlConnectionStringBuilder
                 {
                     Host = host,
