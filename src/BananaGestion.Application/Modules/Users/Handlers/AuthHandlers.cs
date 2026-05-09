@@ -50,13 +50,16 @@ public class LoginHandler : IRequestHandler<LoginCommand, AuthResponse>
                 throw new UnauthorizedAccessException("Usuario inactivo");
             }
 
-            // Update last login (best effort, skip if fails)
-            user.UltimoLogin = DateTime.UtcNow;
+            // Update last login (best effort, don't fail login if this fails)
             try
             {
+                user.UltimoLogin = DateTime.UtcNow;
                 await _userRepository.UpdateAsync(user);
             }
-            catch { }
+            catch (Exception ex)
+            {
+                _logger.LogWarning("Failed to update last login for {Email}: {Message}", user.Email, ex.Message);
+            }
 
             _logger.LogInformation("Generating JWT token for user: {Email}", user.Email);
             var token = _jwtService.GenerateToken(user.Id, user.Email, user.Rol.ToString());
