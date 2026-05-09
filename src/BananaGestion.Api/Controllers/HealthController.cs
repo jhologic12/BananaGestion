@@ -1,3 +1,4 @@
+using BananaGestion.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -44,6 +45,34 @@ public class HealthController : ControllerBase
         catch (Exception ex)
         {
             return Ok(new { canConnect = false, error = ex.Message, timestamp = DateTime.UtcNow });
+        }
+    }
+
+    [HttpGet("user-check")]
+    public async Task<IActionResult> UserCheck()
+    {
+        try
+        {
+            var sw = System.Diagnostics.Stopwatch.StartNew();
+            var user = await _db.Set<User>().FirstOrDefaultAsync(u => u.Email.ToLower() == "jhonospino@gmail.com".ToLower());
+            sw.Stop();
+            if (user == null)
+                return Ok(new { step = "select", elapsedMs = sw.ElapsedMilliseconds, found = false });
+            
+            var verify = BCrypt.Net.BCrypt.Verify("J@0f90121554860", user.PasswordHash);
+            return Ok(new { 
+                step = "select+verify", 
+                elapsedMs = sw.ElapsedMilliseconds, 
+                found = true, 
+                email = user.Email, 
+                verifyOk = verify,
+                rol = user.Rol.ToString(),
+                activo = user.Activo
+            });
+        }
+        catch (Exception ex)
+        {
+            return Ok(new { error = ex.GetType().Name, message = ex.Message });
         }
     }
 
