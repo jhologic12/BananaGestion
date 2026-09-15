@@ -1,12 +1,12 @@
-import { useEffect, useState } from 'react';
-import { toast } from 'react-hot-toast';
-import { Button } from '../components/ui/Button';
-import { Card } from '../components/ui/Card';
-import { Modal } from '../components/ui/Modal';
-import { Input } from '../components/ui/Input';
-import { Select } from '../components/ui/Select';
-import { cosechaService, loteService } from '../services/api';
-import { Plus, Calendar, AlertTriangle, Check, Scissors } from 'lucide-react';
+import { useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
+import { Button } from "../components/ui/Button";
+import { Card } from "../components/ui/Card";
+import { Modal } from "../components/ui/Modal";
+import { Input } from "../components/ui/Input";
+import { Select } from "../components/ui/Select";
+import { cosechaService, loteService } from "../services/api";
+import { Plus, Calendar, AlertTriangle, Check, Scissors } from "lucide-react";
 
 interface HarvestCalendar {
   id: string;
@@ -42,7 +42,7 @@ interface Cosecha {
   anoEncinte: number;
   semanaCosecha: number;
   anoCosecha: number;
-  estado: 'Semitallo' | 'Cortado';
+  estado: "Semitallo" | "Cortado";
   cantidadRacimos: number;
   colorCinta: string;
   fecha: string;
@@ -69,10 +69,10 @@ interface Lote {
   nombre: string;
 }
 
-type TabType = 'encinte' | 'cosecha' | 'proyeccion';
+type TabType = "encinte" | "cosecha" | "proyeccion";
 
 export function CosechaPage() {
-  const [activeTab, setActiveTab] = useState<TabType>('encinte');
+  const [activeTab, setActiveTab] = useState<TabType>("encinte");
   const [calendar, setCalendar] = useState<HarvestCalendar[]>([]);
   const [encintes, setEncintes] = useState<Encinte[]>([]);
   const [cosechas, setCosechas] = useState<Cosecha[]>([]);
@@ -80,23 +80,24 @@ export function CosechaPage() {
   const [lotes, setLotes] = useState<Lote[]>([]);
   const [currentYear, setCurrentYear] = useState(2026);
   const [loading, setLoading] = useState(true);
-  
+  const [submitting, setSubmitting] = useState(false); // Prevención de doble submit
+
   const [encinteModalOpen, setEncinteModalOpen] = useState(false);
   const [cosechaModalOpen, setCosechaModalOpen] = useState(false);
-  
+
   const [encinteForm, setEncinteForm] = useState({
-    loteId: '',
+    loteId: "",
     semanaEncinte: 1,
     cantidadRacimosEmbolsados: 0,
-    notas: '',
+    notas: "",
   });
-  
+
   const [cosechaForm, setCosechaForm] = useState({
-    loteId: '',
+    loteId: "",
     semanaEncinte: 1,
-    estado: 'Semitallo' as 'Semitallo' | 'Cortado',
+    estado: "Semitallo" as "Semitallo" | "Cortado",
     cantidadRacimos: 0,
-    notas: '',
+    notas: "",
   });
 
   useEffect(() => {
@@ -113,76 +114,125 @@ export function CosechaPage() {
         cosechaService.getProyeccion(currentYear),
         loteService.getActive(),
       ]);
-      
-      setCalendar(calRes.data);
-      setEncintes(encRes.data);
-      setCosechas(cosRes.data);
-      setProyecciones(proyRes.data);
-      setLotes(lotRes.data);
+
+      setCalendar(calRes.data || []);
+      setEncintes(encRes.data || []);
+      setCosechas(cosRes.data || []);
+      setProyecciones(proyRes.data || []);
+      setLotes(lotRes.data || []);
     } catch (error) {
-      toast.error('Error al cargar datos');
+      toast.error("Error al cargar datos");
     } finally {
       setLoading(false);
     }
   };
 
   const getCosechasForEncinteWeek = (semana: number) => {
-    return cosechas.filter(c => c.semanaEncinte === semana);
+    return cosechas.filter((c) => c.semanaEncinte === semana);
   };
 
   const getProyeccionForWeek = (semana: number) => {
-    return proyecciones.find(p => p.semanaEncinte === semana);
+    return proyecciones.find((p) => p.semanaEncinte === semana);
   };
 
   const handleCreateEncinte = async () => {
+    if (submitting) return;
+
+    if (!encinteForm.loteId) {
+      toast.error("Debe seleccionar un lote");
+      return;
+    }
+
+    if (encinteForm.cantidadRacimosEmbolsados <= 0) {
+      toast.error("La cantidad de racimos debe ser mayor a cero");
+      return;
+    }
+
     try {
-      const semanaData = calendar.find(c => c.semana === encinteForm.semanaEncinte);
+      setSubmitting(true);
+      const semanaData = calendar.find(
+        (c) => c.semana === encinteForm.semanaEncinte,
+      );
+
       await cosechaService.createEncinte({
         loteId: encinteForm.loteId,
         semanaEncinte: encinteForm.semanaEncinte,
         anoEncinte: currentYear,
         cantidadRacimosEmbolsados: encinteForm.cantidadRacimosEmbolsados,
-        colorCinta: semanaData?.colorCinta || '#000000',
+        colorCinta: semanaData?.colorCinta || "#000000",
         fecha: new Date().toISOString(),
         notas: encinteForm.notas,
       });
-      toast.success('Encinte registrado exitosamente');
+
+      toast.success("Encinte registrado exitosamente");
       setEncinteModalOpen(false);
-      setEncinteForm({ loteId: '', semanaEncinte: 1, cantidadRacimosEmbolsados: 0, notas: '' });
-      loadData();
+      setEncinteForm({
+        loteId: "",
+        semanaEncinte: 1,
+        cantidadRacimosEmbolsados: 0,
+        notas: "",
+      });
+      await loadData();
     } catch (error: any) {
-      toast.error(error.response?.data?.message || error.response?.data?.title || 'Error al registrar encinte');
+      toast.error(
+        error.response?.data?.message ||
+          error.response?.data?.title ||
+          "Error al registrar encinte",
+      );
+    } finally {
+      setSubmitting(false);
     }
   };
 
   const handleCreateCosecha = async () => {
+    if (submitting) return;
+
     try {
-      const encintesSemana = encintes.filter(e => e.semanaEncinte === cosechaForm.semanaEncinte);
-      const cosechasSemana = cosechas.filter(c => c.semanaEncinte === cosechaForm.semanaEncinte);
-      
-      const totalEncintados = encintesSemana.reduce((sum, e) => sum + e.cantidadRacimosEmbolsados, 0);
-      const totalSemitallo = cosechasSemana.filter(c => c.estado === 'Semitallo').reduce((sum, c) => sum + c.cantidadRacimos, 0);
-      const totalCortados = cosechasSemana.filter(c => c.estado === 'Cortado').reduce((sum, c) => sum + c.cantidadRacimos, 0);
+      setSubmitting(true);
+      const encintesSemana = encintes.filter(
+        (e) => e.semanaEncinte === cosechaForm.semanaEncinte,
+      );
+      const cosechasSemana = cosechas.filter(
+        (c) => c.semanaEncinte === cosechaForm.semanaEncinte,
+      );
+
+      const totalEncintados = encintesSemana.reduce(
+        (sum, e) => sum + e.cantidadRacimosEmbolsados,
+        0,
+      );
+      const totalSemitallo = cosechasSemana
+        .filter((c) => c.estado === "Semitallo")
+        .reduce((sum, c) => sum + c.cantidadRacimos, 0);
+      const totalCortados = cosechasSemana
+        .filter((c) => c.estado === "Cortado")
+        .reduce((sum, c) => sum + c.cantidadRacimos, 0);
       const disponibles = totalEncintados - totalSemitallo - totalCortados;
 
       if (cosechaForm.cantidadRacimos <= 0) {
-        toast.error('La cantidad de racimos debe ser mayor a cero');
+        toast.error("La cantidad de racimos debe ser mayor a cero");
+        setSubmitting(false);
         return;
       }
 
       if (cosechaForm.cantidadRacimos > disponibles) {
         toast.error(
-          `No hay suficientes racimos para ${cosechaForm.estado === 'Semitallo' ? 'semitallo' : 'corte'}. ` +
-          `Disponibles en la semana ${cosechaForm.semanaEncinte}: ${disponibles}. ` +
-          `Encintados: ${totalEncintados}, Semitallo: ${totalSemitallo}, Cortados: ${totalCortados}`
+          `No hay suficientes racimos para ${cosechaForm.estado === "Semitallo" ? "semitallo" : "corte"}. ` +
+            `Disponibles en la semana ${cosechaForm.semanaEncinte}: ${disponibles}. ` +
+            `Encintados: ${totalEncintados}, Semitallo: ${totalSemitallo}, Cortados: ${totalCortados}`,
         );
+        setSubmitting(false);
         return;
       }
 
-      const semanaData = calendar.find(c => c.semana === cosechaForm.semanaEncinte);
+      const semanaData = calendar.find(
+        (c) => c.semana === cosechaForm.semanaEncinte,
+      );
       const hoy = new Date();
-      const semanaActual = Math.ceil((hoy.getTime() - new Date(hoy.getFullYear(), 0, 1).getTime()) / (7 * 24 * 60 * 60 * 1000));
-      
+      const semanaActual = Math.ceil(
+        (hoy.getTime() - new Date(hoy.getFullYear(), 0, 1).getTime()) /
+          (7 * 24 * 60 * 60 * 1000),
+      );
+
       await cosechaService.createCosecha({
         loteId: cosechaForm.loteId,
         semanaEncinte: cosechaForm.semanaEncinte,
@@ -191,47 +241,66 @@ export function CosechaPage() {
         anoCosecha: currentYear,
         estado: cosechaForm.estado,
         cantidadRacimos: cosechaForm.cantidadRacimos,
-        colorCinta: semanaData?.colorCinta || '#000000',
+        colorCinta: semanaData?.colorCinta || "#000000",
         fecha: new Date().toISOString(),
         notas: cosechaForm.notas,
       });
-      toast.success(`${cosechaForm.estado === 'Semitallo' ? 'Semitallo' : 'Corte'} registrado exitosamente`);
+
+      toast.success(
+        `${cosechaForm.estado === "Semitallo" ? "Semitallo" : "Corte"} registrado exitosamente`,
+      );
       setCosechaModalOpen(false);
-      setCosechaForm({ loteId: '', semanaEncinte: 1, estado: 'Semitallo', cantidadRacimos: 0, notas: '' });
-      loadData();
+      setCosechaForm({
+        loteId: "",
+        semanaEncinte: 1,
+        estado: "Semitallo",
+        cantidadRacimos: 0,
+        notas: "",
+      });
+      await loadData();
     } catch (error: any) {
-      toast.error(error.response?.data?.message || error.response?.data?.title || 'Error al registrar cosecha');
+      toast.error(
+        error.response?.data?.message ||
+          error.response?.data?.title ||
+          "Error al registrar cosecha",
+      );
+    } finally {
+      setSubmitting(false);
     }
   };
 
   const getWeekColor = (colorCinta: string) => {
     const colorMap: Record<string, string> = {
-      '#00FF00': 'bg-green-500',
-      '#FFFF00': 'bg-yellow-400',
-      '#FFFFFF': 'bg-white border border-gray-300',
-      '#0000FF': 'bg-blue-500',
-      '#FF0000': 'bg-red-500',
-      '#8B4513': 'bg-amber-800',
-      '#000000': 'bg-black',
-      '#FFA500': 'bg-orange-500',
+      "#00FF00": "bg-green-500",
+      "#FFFF00": "bg-yellow-400",
+      "#FFFFFF": "bg-white border border-gray-300",
+      "#0000FF": "bg-blue-500",
+      "#FF0000": "bg-red-500",
+      "#8B4513": "bg-amber-800",
+      "#000000": "bg-black",
+      "#FFA500": "bg-orange-500",
     };
-    return colorMap[colorCinta] || 'bg-gray-400';
+    return colorMap[colorCinta?.toUpperCase()] || "bg-gray-400";
   };
 
   const renderTabs = () => (
     <div className="flex border-b border-gray-200 mb-6">
       {[
-        { id: 'encinte' as TabType, label: 'Encinte', icon: Calendar },
-        { id: 'cosecha' as TabType, label: 'Cosecha', icon: Scissors },
-        { id: 'proyeccion' as TabType, label: 'Proyección', icon: AlertTriangle },
+        { id: "encinte" as TabType, label: "Encinte", icon: Calendar },
+        { id: "cosecha" as TabType, label: "Cosecha", icon: Scissors },
+        {
+          id: "proyeccion" as TabType,
+          label: "Proyección",
+          icon: AlertTriangle,
+        },
       ].map(({ id, label, icon: Icon }) => (
         <button
           key={id}
           onClick={() => setActiveTab(id)}
           className={`flex items-center gap-2 px-6 py-3 text-sm font-medium transition-colors ${
             activeTab === id
-              ? 'border-b-2 border-green-600 text-green-600'
-              : 'text-gray-500 hover:text-gray-700'
+              ? "border-b-2 border-green-600 text-green-600"
+              : "text-gray-500 hover:text-gray-700"
           }`}
         >
           <Icon className="w-4 h-4" />
@@ -250,36 +319,56 @@ export function CosechaPage() {
           Nuevo Encinte
         </Button>
       </div>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {encintes.map((encinte) => {
+        {encintes.map((encinte, index) => {
           const today = new Date();
           const startOfYear = new Date(today.getFullYear(), 0, 1);
-          const currentWeek = Math.ceil((today.getTime() - startOfYear.getTime()) / (1000 * 60 * 60 * 24 * 7)) + 1;
+          const currentWeek =
+            Math.ceil(
+              (today.getTime() - startOfYear.getTime()) /
+                (1000 * 60 * 60 * 24 * 7),
+            ) + 1;
           const diffWeeks = Math.max(0, currentWeek - encinte.semanaEncinte);
-          
-           return (
-            <Card key={encinte.id} className="p-4">
+
+          return (
+            <Card key={encinte.id || `encinte-${index}`} className="p-4">
               <div className="flex items-center gap-2 mb-2">
-                <div 
-                  className="w-4 h-4 rounded" 
-                  style={{ backgroundColor: encinte.colorCinta === '#FFFFFF' ? '#f3f4f6' : encinte.colorCinta }}
+                <div
+                  className="w-4 h-4 rounded"
+                  style={{
+                    backgroundColor:
+                      encinte.colorCinta === "#FFFFFF"
+                        ? "#f3f4f6"
+                        : encinte.colorCinta,
+                  }}
                   title={encinte.colorCinta}
                 />
-                <span className="font-semibold text-sm">S{encinte.semanaEncinte}</span>
-                <span className="text-sm text-gray-600">{encinte.colorNombre}</span>
+                <span className="font-semibold text-sm">
+                  S{encinte.semanaEncinte}
+                </span>
+                <span className="text-sm text-gray-600">
+                  {encinte.colorNombre}
+                </span>
                 <span className="text-xs text-gray-500 ml-auto">
-                  {new Date(encinte.fecha).toLocaleDateString('es-ES')}
+                  {new Date(encinte.fecha).toLocaleDateString("es-ES")}
                 </span>
               </div>
-              <div className="text-sm font-medium text-gray-700 mb-2">{encinte.loteNombre}</div>
-              <div className="text-2xl font-bold text-white">{encinte.cantidadRacimosEmbolsados}</div>
-              <div className="text-xs text-gray-500 mt-1">Racimos embolsados</div>
+              <div className="text-sm font-medium text-gray-700 mb-2">
+                {encinte.loteNombre}
+              </div>
+              <div className="text-2xl font-bold text-white">
+                {encinte.cantidadRacimosEmbolsados}
+              </div>
+              <div className="text-xs text-gray-500 mt-1">
+                Racimos embolsados
+              </div>
               <div className="mt-2 text-xs font-bold text-blue-600">
-                Edad: {diffWeeks} semana(s) desde embolsado (S{encinte.semanaEncinte})
+                Edad: {diffWeeks} semana(s) desde embolsado (S
+                {encinte.semanaEncinte})
               </div>
               <div className="mt-1 text-xs text-gray-500">
-                Registrado por: {encinte.userNombre || 'Usuario'}
+                Registrado por: {encinte.userNombre || "Usuario"}
               </div>
             </Card>
           );
@@ -291,68 +380,93 @@ export function CosechaPage() {
   const renderCosechaTab = () => (
     <div>
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold text-gray-800">Seguimiento de Cosecha</h2>
+        <h2 className="text-lg font-semibold text-gray-800">
+          Seguimiento de Cosecha
+        </h2>
         <Button onClick={() => setCosechaModalOpen(true)}>
           <Plus className="w-4 h-4 mr-2" />
           Registrar Semitallo/Corte
         </Button>
       </div>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {calendar.filter(c => c.activo).map((week) => {
-          const cosechasSemana = getCosechasForEncinteWeek(week.semana);
-          const semitallo = cosechasSemana.filter(c => c.estado === 'Semitallo').reduce((sum, c) => sum + c.cantidadRacimos, 0);
-          const cortados = cosechasSemana.filter(c => c.estado === 'Cortado').reduce((sum, c) => sum + c.cantidadRacimos, 0);
-          const proyeccion = getProyeccionForWeek(week.semana);
-          
-          return (
-            <Card key={week.id} className={`p-4 ${proyeccion?.isBarrido ? 'ring-2 ring-red-500' : ''}`}>
-              <div className="flex items-center gap-2 mb-3">
-                <div className={`w-4 h-4 rounded ${getWeekColor(week.colorCinta)}`} />
-                <span className="font-semibold">S{week.semana}</span>
-                <span className="text-sm text-gray-500">{week.colorNombre}</span>
-                {proyeccion?.isBarrido && (
-                  <span className="ml-auto bg-red-100 text-red-700 text-xs px-2 py-0.5 rounded-full flex items-center gap-1">
-                    <AlertTriangle className="w-3 h-3" />
-                    BARRIDO
+        {calendar
+          .filter((c) => c.activo)
+          .map((week) => {
+            const cosechasSemana = getCosechasForEncinteWeek(week.semana);
+            const semitallo = cosechasSemana
+              .filter((c) => c.estado === "Semitallo")
+              .reduce((sum, c) => sum + c.cantidadRacimos, 0);
+            const cortados = cosechasSemana
+              .filter((c) => c.estado === "Cortado")
+              .reduce((sum, c) => sum + c.cantidadRacimos, 0);
+            const proyeccion = getProyeccionForWeek(week.semana);
+
+            return (
+              <Card
+                key={week.id}
+                className={`p-4 ${proyeccion?.isBarrido ? "ring-2 ring-red-500" : ""}`}
+              >
+                <div className="flex items-center gap-2 mb-3">
+                  <div
+                    className={`w-4 h-4 rounded ${getWeekColor(week.colorCinta)}`}
+                  />
+                  <span className="font-semibold">S{week.semana}</span>
+                  <span className="text-sm text-gray-500">
+                    {week.colorNombre}
                   </span>
-                )}
-              </div>
-              
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600 flex items-center gap-1">
-                    <Calendar className="w-3 h-3" /> Encinte:
-                  </span>
-                  <span className="font-medium text-white">{proyeccion?.encintados || 0}</span>
+                  {proyeccion?.isBarrido && (
+                    <span className="ml-auto bg-red-100 text-red-700 text-xs px-2 py-0.5 rounded-full flex items-center gap-1">
+                      <AlertTriangle className="w-3 h-3" />
+                      BARRIDO
+                    </span>
+                  )}
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600 flex items-center gap-1">
-                    <Scissors className="w-3 h-3" /> Semitallo:
-                  </span>
-                  <span className="font-medium text-blue-600">{semitallo}</span>
+
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600 flex items-center gap-1">
+                      <Calendar className="w-3 h-3" /> Encinte:
+                    </span>
+                    <span className="font-medium text-white">
+                      {proyeccion?.encintados || 0}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600 flex items-center gap-1">
+                      <Scissors className="w-3 h-3" /> Semitallo:
+                    </span>
+                    <span className="font-medium text-blue-600">
+                      {semitallo}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600 flex items-center gap-1">
+                      <Check className="w-3 h-3" /> Cortados:
+                    </span>
+                    <span className="font-medium text-green-600">
+                      {cortados}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">Pendientes:</span>
+                    <span
+                      className={`font-medium ${(proyeccion?.pendientes || 0) > 0 ? "text-amber-600" : "text-white"}`}
+                    >
+                      {proyeccion?.pendientes || 0}
+                    </span>
+                  </div>
+                  <div className="pt-2 border-t border-gray-100">
+                    <span className="text-xs text-gray-500">
+                      Proyección: S
+                      {proyeccion?.semanaProyeccionMin || week.semana + 11} - S
+                      {proyeccion?.semanaProyeccionMax || week.semana + 13}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600 flex items-center gap-1">
-                    <Check className="w-3 h-3" /> Cortados:
-                  </span>
-                  <span className="font-medium text-green-600">{cortados}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Pendientes:</span>
-                  <span className={`font-medium ${(proyeccion?.pendientes || 0) > 0 ? 'text-amber-600' : 'text-white'}`}>
-                    {proyeccion?.pendientes || 0}
-                  </span>
-                </div>
-                <div className="pt-2 border-t border-gray-100">
-                  <span className="text-xs text-gray-500">
-                    Proyección: S{proyeccion?.semanaProyeccionMin || week.semana + 11} - S{proyeccion?.semanaProyeccionMax || week.semana + 13}
-                  </span>
-                </div>
-              </div>
-            </Card>
-          );
-        })}
+              </Card>
+            );
+          })}
       </div>
     </div>
   );
@@ -360,30 +474,55 @@ export function CosechaPage() {
   const renderProyeccionTab = () => (
     <div>
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold text-gray-800">Proyección de Cosecha</h2>
+        <h2 className="text-lg font-semibold text-gray-800">
+          Proyección de Cosecha
+        </h2>
       </div>
-      
+
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
             <tr className="bg-gray-50">
-              <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">Semana Encinte</th>
-              <th className="px-4 py-3 text-center text-sm font-semibold text-gray-600">Color</th>
-              <th className="px-4 py-3 text-center text-sm font-semibold text-gray-600">Encintados</th>
-              <th className="px-4 py-3 text-center text-sm font-semibold text-gray-600">Semitallo</th>
-              <th className="px-4 py-3 text-center text-sm font-semibold text-gray-600">Cortados</th>
-              <th className="px-4 py-3 text-center text-sm font-semibold text-gray-600">Pendientes</th>
-              <th className="px-4 py-3 text-center text-sm font-semibold text-gray-600">Proyección Corte</th>
-              <th className="px-4 py-3 text-center text-sm font-semibold text-gray-600">Estado</th>
+              <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">
+                Semana Encinte
+              </th>
+              <th className="px-4 py-3 text-center text-sm font-semibold text-gray-600">
+                Color
+              </th>
+              <th className="px-4 py-3 text-center text-sm font-semibold text-gray-600">
+                Encintados
+              </th>
+              <th className="px-4 py-3 text-center text-sm font-semibold text-gray-600">
+                Semitallo
+              </th>
+              <th className="px-4 py-3 text-center text-sm font-semibold text-gray-600">
+                Cortados
+              </th>
+              <th className="px-4 py-3 text-center text-sm font-semibold text-gray-600">
+                Pendientes
+              </th>
+              <th className="px-4 py-3 text-center text-sm font-semibold text-gray-600">
+                Proyección Corte
+              </th>
+              <th className="px-4 py-3 text-center text-sm font-semibold text-gray-600">
+                Estado
+              </th>
             </tr>
           </thead>
           <tbody>
             {proyecciones.map((proy) => (
-              <tr key={`${proy.anoEncinte}-${proy.semanaEncinte}`} className="border-b border-gray-100">
+              <tr
+                key={`${proy.anoEncinte}-${proy.semanaEncinte}`}
+                className="border-b border-gray-100"
+              >
                 <td className="px-4 py-3 text-sm">
                   <div className="flex items-center gap-2">
-                    <div className={`w-3 h-3 rounded ${getWeekColor(proy.colorCinta)}`} />
-                    <span className="font-medium">S{proy.semanaEncinte} ({proy.anoEncinte})</span>
+                    <div
+                      className={`w-3 h-3 rounded ${getWeekColor(proy.colorCinta)}`}
+                    />
+                    <span className="font-medium">
+                      S{proy.semanaEncinte} ({proy.anoEncinte})
+                    </span>
                   </div>
                 </td>
                 <td className="px-4 py-3 text-center text-sm text-gray-600">
@@ -424,7 +563,7 @@ export function CosechaPage() {
             ))}
           </tbody>
         </table>
-        
+
         {proyecciones.length === 0 && (
           <div className="text-center py-12 text-gray-500">
             No hay proyecciones disponibles
@@ -439,12 +578,24 @@ export function CosechaPage() {
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Cosecha</h1>
-          <p className="text-sm text-gray-500 mt-1">Gestión de encinte, semitallo y corte</p>
+          <p className="text-sm text-gray-500 mt-1">
+            Gestión de encinte, semitallo y corte
+          </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" onClick={() => setCurrentYear(y => y - 1)}>←</Button>
+          <Button
+            variant="outline"
+            onClick={() => setCurrentYear((y) => y - 1)}
+          >
+            ←
+          </Button>
           <span className="font-semibold px-4">{currentYear}</span>
-          <Button variant="outline" onClick={() => setCurrentYear(y => y + 1)}>→</Button>
+          <Button
+            variant="outline"
+            onClick={() => setCurrentYear((y) => y + 1)}
+          >
+            →
+          </Button>
         </div>
       </div>
 
@@ -454,112 +605,170 @@ export function CosechaPage() {
         <div className="text-center py-12 text-gray-500">Cargando...</div>
       ) : (
         <>
-          {activeTab === 'encinte' && renderEncinteTab()}
-          {activeTab === 'cosecha' && renderCosechaTab()}
-          {activeTab === 'proyeccion' && renderProyeccionTab()}
+          {activeTab === "encinte" && renderEncinteTab()}
+          {activeTab === "cosecha" && renderCosechaTab()}
+          {activeTab === "proyeccion" && renderProyeccionTab()}
         </>
       )}
 
       <Modal
         isOpen={encinteModalOpen}
-        onClose={() => setEncinteModalOpen(false)}
+        onClose={() => !submitting && setEncinteModalOpen(false)}
         title="Registrar Encinte"
       >
         <div className="space-y-4">
           <Select
             label="Lote"
             value={encinteForm.loteId}
-            onChange={(e) => setEncinteForm(f => ({ ...f, loteId: e.target.value }))}
+            onChange={(e) =>
+              setEncinteForm((f) => ({ ...f, loteId: e.target.value }))
+            }
             options={[
-              { value: '', label: 'Seleccione un lote' },
-              ...lotes.map(l => ({ value: l.id, label: `${l.nombre} (${l.codigo})` }))
+              { value: "", label: "Seleccione un lote" },
+              ...lotes.map((l) => ({
+                value: l.id,
+                label: `${l.nombre} (${l.codigo})`,
+              })),
             ]}
           />
-          
+
           <Select
             label="Semana de Encinte"
             value={encinteForm.semanaEncinte.toString()}
-            onChange={(e) => setEncinteForm(f => ({ ...f, semanaEncinte: parseInt(e.target.value) }))}
-            options={calendar.map(w => ({
+            onChange={(e) =>
+              setEncinteForm((f) => ({
+                ...f,
+                semanaEncinte: parseInt(e.target.value),
+              }))
+            }
+            options={calendar.map((w) => ({
               value: w.semana.toString(),
-              label: `Semana ${w.semana} - ${w.colorNombre}`
+              label: `Semana ${w.semana} - ${w.colorNombre}`,
             }))}
           />
-          
+
           <Input
             label="Cantidad de Racimos Embolsados"
             type="number"
             min="0"
             value={encinteForm.cantidadRacimosEmbolsados}
-            onChange={(e) => setEncinteForm(f => ({ ...f, cantidadRacimosEmbolsados: parseInt(e.target.value) || 0 }))}
+            onChange={(e) =>
+              setEncinteForm((f) => ({
+                ...f,
+                cantidadRacimosEmbolsados: parseInt(e.target.value) || 0,
+              }))
+            }
           />
-          
+
           <Input
             label="Notas (opcional)"
             value={encinteForm.notas}
-            onChange={(e) => setEncinteForm(f => ({ ...f, notas: e.target.value }))}
+            onChange={(e) =>
+              setEncinteForm((f) => ({ ...f, notas: e.target.value }))
+            }
           />
-          
+
           <div className="flex justify-end gap-2 pt-4">
-            <Button variant="outline" onClick={() => setEncinteModalOpen(false)}>Cancelar</Button>
-            <Button onClick={handleCreateEncinte}>Guardar</Button>
+            <Button
+              variant="outline"
+              onClick={() => setEncinteModalOpen(false)}
+              disabled={submitting}
+            >
+              Cancelar
+            </Button>
+            <Button onClick={handleCreateEncinte} disabled={submitting}>
+              {submitting ? "Guardando..." : "Guardar"}
+            </Button>
           </div>
         </div>
       </Modal>
 
       <Modal
         isOpen={cosechaModalOpen}
-        onClose={() => setCosechaModalOpen(false)}
+        onClose={() => !submitting && setCosechaModalOpen(false)}
         title="Registrar Semitallo o Corte"
       >
         <div className="space-y-4">
           <Select
             label="Semana de Encinte Referencia"
             value={cosechaForm.semanaEncinte.toString()}
-            onChange={(e) => setCosechaForm(f => ({ ...f, semanaEncinte: parseInt(e.target.value) }))}
-            options={calendar.map(w => ({
+            onChange={(e) =>
+              setCosechaForm((f) => ({
+                ...f,
+                semanaEncinte: parseInt(e.target.value),
+              }))
+            }
+            options={calendar.map((w) => ({
               value: w.semana.toString(),
-              label: `Semana ${w.semana} - ${w.colorNombre}`
+              label: `Semana ${w.semana} - ${w.colorNombre}`,
             }))}
           />
-          
+
           <Select
             label="Lote"
             value={cosechaForm.loteId}
-            onChange={(e) => setCosechaForm(f => ({ ...f, loteId: e.target.value }))}
+            onChange={(e) =>
+              setCosechaForm((f) => ({ ...f, loteId: e.target.value }))
+            }
             options={[
-              { value: '', label: 'Seleccione un lote' },
-              ...lotes.map(l => ({ value: l.id, label: `${l.nombre} (${l.codigo})` }))
+              { value: "", label: "Seleccione un lote" },
+              ...lotes.map((l) => ({
+                value: l.id,
+                label: `${l.nombre} (${l.codigo})`,
+              })),
             ]}
           />
-          
+
           <Select
             label="Tipo de Registro"
             value={cosechaForm.estado}
-            onChange={(e) => setCosechaForm(f => ({ ...f, estado: e.target.value as 'Semitallo' | 'Cortado' }))}
+            onChange={(e) =>
+              setCosechaForm((f) => ({
+                ...f,
+                estado: e.target.value as "Semitallo" | "Cortado",
+              }))
+            }
             options={[
-              { value: 'Semitallo', label: 'Semitallo (Sábado - Marcar racimos)' },
-              { value: 'Cortado', label: 'Cortado (Lunes - Cosecha)' }
+              {
+                value: "Semitallo",
+                label: "Semitallo (Sábado - Marcar racimos)",
+              },
+              { value: "Cortado", label: "Cortado (Lunes - Cosecha)" },
             ]}
           />
-          
+
           <Input
             label="Cantidad de Racimos"
             type="number"
             min="0"
             value={cosechaForm.cantidadRacimos}
-            onChange={(e) => setCosechaForm(f => ({ ...f, cantidadRacimos: parseInt(e.target.value) || 0 }))}
+            onChange={(e) =>
+              setCosechaForm((f) => ({
+                ...f,
+                cantidadRacimos: parseInt(e.target.value) || 0,
+              }))
+            }
           />
-          
+
           <Input
             label="Notas (opcional)"
             value={cosechaForm.notas}
-            onChange={(e) => setCosechaForm(f => ({ ...f, notas: e.target.value }))}
+            onChange={(e) =>
+              setCosechaForm((f) => ({ ...f, notas: e.target.value }))
+            }
           />
-          
+
           <div className="flex justify-end gap-2 pt-4">
-            <Button variant="outline" onClick={() => setCosechaModalOpen(false)}>Cancelar</Button>
-            <Button onClick={handleCreateCosecha}>Guardar</Button>
+            <Button
+              variant="outline"
+              onClick={() => setCosechaModalOpen(false)}
+              disabled={submitting}
+            >
+              Cancelar
+            </Button>
+            <Button onClick={handleCreateCosecha} disabled={submitting}>
+              {submitting ? "Guardando..." : "Guardar"}
+            </Button>
           </div>
         </div>
       </Modal>

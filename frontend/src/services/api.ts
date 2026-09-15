@@ -1,9 +1,10 @@
 import axios from 'axios';
 import { useAuthStore } from '../store/authStore';
 
+// URL dinámico: Lee las variables de entorno de Vercel en producción o fallback local
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
-const api = axios.create({
+export const api = axios.create({
   baseURL: API_URL,
   timeout: 120000,
   headers: {
@@ -11,21 +12,68 @@ const api = axios.create({
   },
 });
 
-api.interceptors.request.use((config) => {
-  const token = useAuthStore.getState().token;
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
+// Mapa para gestionar y abortar peticiones duplicadas en tránsito
+const pendingRequests = new Map<string, AbortController>();
 
+const getRequestKey = (config: any) => {
+  return `${config.method}:${config.url}:${JSON.stringify(config.data || {})}`;
+};
+
+// Interceptor de Solicitudes (Request)
+api.interceptors.request.use(
+  (config) => {
+    // 1. Inyección de Token de Autenticación
+    const token = useAuthStore.getState().token;
+    if (token && config.headers) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    // 2. Control de deduplicación para operaciones de escritura
+    if (['post', 'put', 'delete'].includes(config.method?.toLowerCase() || '')) {
+      const requestKey = getRequestKey(config);
+
+      if (pendingRequests.has(requestKey)) {
+        const controller = pendingRequests.get(requestKey);
+        controller?.abort('Petición duplicada cancelada.');
+        pendingRequests.delete(requestKey);
+      }
+
+      const controller = new AbortController();
+      config.signal = controller.signal;
+      pendingRequests.set(requestKey, controller);
+    }
+
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+// Interceptor de Respuestas (Response)
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    if (response.config) {
+      const requestKey = getRequestKey(response.config);
+      pendingRequests.delete(requestKey);
+    }
+    return response;
+  },
   (error) => {
+    if (error.config) {
+      const requestKey = getRequestKey(error.config);
+      pendingRequests.delete(requestKey);
+    }
+
+    // Ignorar si la petición fue abortada por deduplicación activa
+    if (axios.isCancel(error)) {
+      return Promise.reject(error);
+    }
+
+    // Cierre de sesión automático si el token expiró o no es válido (401)
     if (error.response?.status === 401) {
       useAuthStore.getState().logout();
       window.location.href = '/login';
     }
+
     return Promise.reject(error);
   }
 );
