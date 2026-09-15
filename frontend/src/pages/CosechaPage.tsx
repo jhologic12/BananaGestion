@@ -78,9 +78,9 @@ export function CosechaPage() {
   const [cosechas, setCosechas] = useState<Cosecha[]>([]);
   const [proyecciones, setProyecciones] = useState<Proyeccion[]>([]);
   const [lotes, setLotes] = useState<Lote[]>([]);
-  const [currentYear, setCurrentYear] = useState(2026);
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false); // Prevención de doble submit
+  const [submitting, setSubmitting] = useState(false);
 
   const [encinteModalOpen, setEncinteModalOpen] = useState(false);
   const [cosechaModalOpen, setCosechaModalOpen] = useState(false);
@@ -117,22 +117,17 @@ export function CosechaPage() {
 
       setCalendar(calRes.data || []);
 
-      // Garantizar que la lista de encintes no conserve IDs duplicados
       const uniqueEncintes = (encRes.data || []).filter(
-        (item: any, index: number, self: any[]) =>
+        (item: Encinte, index: number, self: Encinte[]) =>
           index === self.findIndex((t) => t.id === item.id),
       );
       setEncintes(uniqueEncintes);
 
-      //setEncintes(encRes.data || []);
-
-      // Garantizar que la lista de cosechas no conserve IDs duplicados
       const uniqueCosechas = (cosRes.data || []).filter(
-        (item: any, index: number, self: any[]) =>
+        (item: Cosecha, index: number, self: Cosecha[]) =>
           index === self.findIndex((t) => t.id === item.id),
       );
       setCosechas(uniqueCosechas);
-      //setCosechas(cosRes.data || []);
 
       setProyecciones(proyRes.data || []);
       setLotes(lotRes.data || []);
@@ -373,7 +368,7 @@ export function CosechaPage() {
               <div className="text-sm font-medium text-gray-700 mb-2">
                 {encinte.loteNombre}
               </div>
-              <div className="text-2xl font-bold text-white">
+              <div className="text-2xl font-bold text-gray-900">
                 {encinte.cantidadRacimosEmbolsados}
               </div>
               <div className="text-xs text-gray-500 mt-1">
@@ -444,7 +439,7 @@ export function CosechaPage() {
                     <span className="text-gray-600 flex items-center gap-1">
                       <Calendar className="w-3 h-3" /> Encinte:
                     </span>
-                    <span className="font-medium text-white">
+                    <span className="font-medium text-gray-900">
                       {proyeccion?.encintados || 0}
                     </span>
                   </div>
@@ -467,7 +462,7 @@ export function CosechaPage() {
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Pendientes:</span>
                     <span
-                      className={`font-medium ${(proyeccion?.pendientes || 0) > 0 ? "text-amber-600" : "text-white"}`}
+                      className={`font-medium ${(proyeccion?.pendientes || 0) > 0 ? "text-amber-600" : "text-gray-900"}`}
                     >
                       {proyeccion?.pendientes || 0}
                     </span>
