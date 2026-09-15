@@ -116,8 +116,24 @@ export function CosechaPage() {
       ]);
 
       setCalendar(calRes.data || []);
-      setEncintes(encRes.data || []);
-      setCosechas(cosRes.data || []);
+
+      // Garantizar que la lista de encintes no conserve IDs duplicados
+      const uniqueEncintes = (encRes.data || []).filter(
+        (item: any, index: number, self: any[]) =>
+          index === self.findIndex((t) => t.id === item.id),
+      );
+      setEncintes(uniqueEncintes);
+
+      //setEncintes(encRes.data || []);
+
+      // Garantizar que la lista de cosechas no conserve IDs duplicados
+      const uniqueCosechas = (cosRes.data || []).filter(
+        (item: any, index: number, self: any[]) =>
+          index === self.findIndex((t) => t.id === item.id),
+      );
+      setCosechas(uniqueCosechas);
+      //setCosechas(cosRes.data || []);
+
       setProyecciones(proyRes.data || []);
       setLotes(lotRes.data || []);
     } catch (error) {
@@ -321,7 +337,7 @@ export function CosechaPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {encintes.map((encinte, index) => {
+        {encintes.map((encinte) => {
           const today = new Date();
           const startOfYear = new Date(today.getFullYear(), 0, 1);
           const currentWeek =
@@ -332,7 +348,7 @@ export function CosechaPage() {
           const diffWeeks = Math.max(0, currentWeek - encinte.semanaEncinte);
 
           return (
-            <Card key={encinte.id || `encinte-${index}`} className="p-4">
+            <Card key={encinte.id} className="p-4">
               <div className="flex items-center gap-2 mb-2">
                 <div
                   className="w-4 h-4 rounded"
