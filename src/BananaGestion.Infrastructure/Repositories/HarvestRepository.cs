@@ -67,8 +67,36 @@ public class HarvestRepository : IHarvestRepository
             .FirstOrDefaultAsync(r => r.Id == id);
     }
 
+    public async Task<bool> EncinteExistsAsync(int semanaEncinte, int anoEncinte, Guid loteId)
+    {
+        return await _context.HarvestRecords
+            .AnyAsync(r => r.SemanaEncinte == semanaEncinte && r.AnoEncinte == anoEncinte && r.LoteId == loteId);
+    }
+
     public async Task<HarvestRecord> CreateEncinteAsync(HarvestRecord record)
     {
+        await _context.HarvestRecords.AddAsync(record);
+        await _context.SaveChangesAsync();
+        return record;
+    }
+
+    public async Task<HarvestRecord> UpdateEncinteAsyncIfExists(HarvestRecord record)
+    {
+        var existing = await _context.HarvestRecords
+            .FirstOrDefaultAsync(r => r.SemanaEncinte == record.SemanaEncinte 
+                                   && r.AnoEncinte == record.AnoEncinte 
+                                   && r.LoteId == record.LoteId);
+
+        if (existing != null)
+        {
+            existing.CantidadRacimosEmbolsados = record.CantidadRacimosEmbolsados;
+            existing.ColorCinta = record.ColorCinta;
+            existing.Fecha = record.Fecha;
+            existing.Notas = record.Notas;
+            await _context.SaveChangesAsync();
+            return existing;
+        }
+
         await _context.HarvestRecords.AddAsync(record);
         await _context.SaveChangesAsync();
         return record;

@@ -12,6 +12,7 @@ public interface IHarvestRepository
     Task<IEnumerable<HarvestRecord>> GetEncinteByWeekAsync(int semana, int ano);
     Task<HarvestRecord?> GetRecordWithDetailsAsync(Guid id);
     Task<HarvestRecord> CreateEncinteAsync(HarvestRecord record);
+    Task<bool> EncinteExistsAsync(int semanaEncinte, int anoEncinte, Guid loteId);
     Task UpdateEncinteAsync(HarvestRecord record);
     
     Task<IEnumerable<HarvestCosecha>> GetCosechasByYearAsync(int year);

@@ -52,6 +52,7 @@ CREATE TABLE lotes (
     "Longitud" numeric,
     "Activo" boolean NOT NULL,
     "FechaCreacion" timestamp with time zone NOT NULL,
+    "GeojsonPolygon" text,
     "Notas" text,
     CONSTRAINT "PK_lotes" PRIMARY KEY ("Id")
 );
@@ -298,6 +299,7 @@ CREATE UNIQUE INDEX "IX_task_logs_TaskAssignmentId" ON task_logs ("TaskAssignmen
 
 CREATE INDEX "IX_task_logs_TaskConfigId" ON task_logs ("TaskConfigId");
 
+CREATE UNIQUE INDEX "IX_harvest_records_SemanaAnoLote" ON harvest_records ("semana_encinte", "ano_encinte", "LoteId");
 CREATE UNIQUE INDEX "IX_users_Email" ON users ("Email");
 
 INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")

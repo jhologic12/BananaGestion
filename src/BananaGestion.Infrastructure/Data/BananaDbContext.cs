@@ -48,6 +48,7 @@ public class BananaDbContext : DbContext
             entity.Property(e => e.Codigo).IsRequired().HasMaxLength(50);
             entity.Property(e => e.Nombre).IsRequired().HasMaxLength(200);
             entity.Property(e => e.Hectareas).HasPrecision(10, 4);
+            entity.Property(e => e.GeojsonPolygon).HasColumnType("text");
         });
 
         modelBuilder.Entity<TaskConfig>(entity =>
@@ -143,6 +144,7 @@ public class BananaDbContext : DbContext
             entity.Property(e => e.ColorCinta).IsRequired().HasMaxLength(50);
             entity.Property(e => e.SemanaEncinte).HasColumnName("semana_encinte");
             entity.Property(e => e.AnoEncinte).HasColumnName("ano_encinte");
+            entity.HasIndex(e => new { e.SemanaEncinte, e.AnoEncinte, e.LoteId }).IsUnique();
             entity.HasOne(e => e.HarvestCalendar)
                   .WithMany(h => h.HarvestRecords)
                   .HasForeignKey(e => e.HarvestCalendarId)

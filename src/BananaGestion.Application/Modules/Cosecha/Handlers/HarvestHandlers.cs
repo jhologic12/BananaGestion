@@ -99,6 +99,13 @@ public class HarvestHandlers :
             throw new InvalidOperationException("No se pudo identificar el usuario que registra el encinte");
         }
 
+        var exists = await _repository.EncinteExistsAsync(request.Request.SemanaEncinte, request.Request.AnoEncinte, request.Request.LoteId);
+        
+        if (exists)
+        {
+            throw new InvalidOperationException("Ya existe un registro de encinte para este lote, semana y año");
+        }
+
         var calendar = await _repository.GetCalendarByWeekAsync(request.Request.SemanaEncinte, request.Request.AnoEncinte);
         
         var record = new HarvestRecord

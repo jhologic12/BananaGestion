@@ -8,6 +8,7 @@ public record LoteDto(
     string? Ubicacion,
     decimal? Latitud,
     decimal? Longitud,
+    string? GeojsonPolygon,
     bool Activo,
     DateTime FechaCreacion,
     string? Notas
@@ -16,10 +17,11 @@ public record LoteDto(
 public record CreateLoteRequest(
     string Codigo,
     string Nombre,
-    decimal Hectareas,
+    decimal? Hectareas,
     string? Ubicacion,
     decimal? Latitud,
     decimal? Longitud,
+    string? GeojsonPolygon,
     string? Notas
 );
 
@@ -29,6 +31,7 @@ public record UpdateLoteRequest(
     string? Ubicacion,
     decimal? Latitud,
     decimal? Longitud,
+    string? GeojsonPolygon,
     bool? Activo,
     string? Notas
 );

@@ -11,6 +11,7 @@ public class Lote
     public decimal? Longitud { get; set; }
     public bool Activo { get; set; } = true;
     public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;
+    public string? GeojsonPolygon { get; set; }
     public string? Notas { get; set; }
 
     public virtual ICollection<TaskAssignment> TaskAssignments { get; set; } = new List<TaskAssignment>();
